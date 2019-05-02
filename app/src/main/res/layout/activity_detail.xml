@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:id="@+id/DetailActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello world"
-        android:textStyle="bold"/>
+        style="@style/Text_H1"
+        tools:text="Hello world"
+        android:layout_marginTop="4dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello world"
-        android:textStyle="italic"/>
+        tools:text="Hello world"
+        android:textStyle="italic"
+        android:layout_marginTop="4dp"
+        android:textSize="12sp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello world" />
+        tools:text="Hello world"
+        android:layout_marginTop="4dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello world" />
+        tools:text="Hello world"
+        android:layout_marginTop="4dp"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="@string/label_add_watchlist"
+        android:layout_marginTop="4dp"
+        android:id="@+id/addButton"/>
 </LinearLayout>
