@@ -1,4 +1,4 @@
-package com.soundapp.mobile.filmica.films
+package com.soundapp.mobile.filmica.screens.films
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.Repository.Domain.Film
+import com.soundapp.mobile.filmica.repository.domain.Film
 
 class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAdapter.FilmVH>() {
     private val films: MutableList<Film> = mutableListOf()

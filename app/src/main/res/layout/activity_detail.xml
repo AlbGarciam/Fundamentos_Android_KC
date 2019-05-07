@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         style="@style/Text_H1"
         tools:text="Hello world"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp"
+        android:id="@+id/titleLabel"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -20,19 +21,22 @@
         tools:text="Hello world"
         android:textStyle="italic"
         android:layout_marginTop="4dp"
-        android:textSize="12sp"/>
+        android:textSize="12sp"
+        android:id="@+id/descriptionLabel"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Hello world"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp"
+        android:id="@+id/genresLabel"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Hello world"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp"
+        android:id="@+id/ratingsLabel"/>
 
     <Button
         android:layout_width="match_parent"
