@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import com.soundapp.mobile.filmica.DetailActivity
 import com.soundapp.mobile.filmica.R
+import com.soundapp.mobile.filmica.Repository.Domain.Film
 import com.soundapp.mobile.filmica.Repository.FilmsRepo
 
 class FilmsActivity: AppCompatActivity() {
@@ -16,7 +16,9 @@ class FilmsActivity: AppCompatActivity() {
         setContentView(R.layout.activity_films)
 
         val list: RecyclerView = findViewById(R.id.list)
-        val adapter = FilmsAdapter()
+        val adapter = FilmsAdapter { film ->
+            this@FilmsActivity.launchFilmDetail(film)
+        }
 
         list.layoutManager = LinearLayoutManager(this) // AppCompatActivity inherits from Context
         list.adapter = adapter
@@ -24,7 +26,7 @@ class FilmsActivity: AppCompatActivity() {
         adapter.setFilms(FilmsRepo.films)
     }
 
-    fun onFilmsButtonClicked(view: View) {
+    private fun launchFilmDetail(film: Film) {
         val intent = Intent(this, DetailActivity::class.java)
         startActivity(intent)
     }

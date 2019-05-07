@@ -8,7 +8,7 @@ import android.widget.TextView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.Repository.Domain.Film
 
-class FilmsAdapter : RecyclerView.Adapter<FilmsAdapter.FilmVH>() {
+class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAdapter.FilmVH>() {
     private val films: MutableList<Film> = mutableListOf()
 
     override fun onCreateViewHolder(recyclerView: ViewGroup, type: Int): FilmVH {
@@ -40,5 +40,13 @@ class FilmsAdapter : RecyclerView.Adapter<FilmsAdapter.FilmVH>() {
                 // In case that value is null the following line won't be executed
                 (itemView as? TextView)?.text = value?.title
             }
+
+        init {
+            itemView.setOnClickListener {
+                film?.let { film ->
+                    listener.invoke(film)
+                }
+            }
+        }
     }
 }
