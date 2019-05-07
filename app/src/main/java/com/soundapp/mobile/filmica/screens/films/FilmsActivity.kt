@@ -8,9 +8,13 @@ class FilmsActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_films)
-        val listFragment = FilmsFragment()
-        supportFragmentManager.beginTransaction()
-                .add(R.id.container, listFragment)
-                .commit()
+
+        if (savedInstanceState  == null ) {
+            val listFragment = FilmsFragment()
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.container, listFragment)
+                    .commit()
+        }
     }
+
 }

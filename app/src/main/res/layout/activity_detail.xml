@@ -1,47 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:id="@+id/DetailActivity">
+    android:id="@+id/container">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Text_H1"
-        tools:text="Hello world"
-        android:layout_marginTop="4dp"
-        android:id="@+id/titleLabel"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Hello world"
-        android:textStyle="italic"
-        android:layout_marginTop="4dp"
-        android:textSize="12sp"
-        android:id="@+id/descriptionLabel"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Hello world"
-        android:layout_marginTop="4dp"
-        android:id="@+id/genresLabel"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Hello world"
-        android:layout_marginTop="4dp"
-        android:id="@+id/ratingsLabel"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/label_add_watchlist"
-        android:layout_marginTop="4dp"
-        android:id="@+id/addButton"/>
-</LinearLayout>
+</FrameLayout>
