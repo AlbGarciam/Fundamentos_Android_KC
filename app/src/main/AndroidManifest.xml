@@ -13,7 +13,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".DetailActivity">
         </activity>
-        <activity android:name=".FilmsActivity">
+        <activity android:name=".films.FilmsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
