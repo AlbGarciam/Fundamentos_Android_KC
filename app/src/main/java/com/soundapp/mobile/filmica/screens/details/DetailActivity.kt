@@ -3,9 +3,8 @@ package com.soundapp.mobile.filmica.screens.details
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
 
 class DetailActivity : AppCompatActivity() {
