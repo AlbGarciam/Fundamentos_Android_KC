@@ -4,9 +4,9 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.Film
+import kotlinx.android.synthetic.main.item_film.view.*
 
 class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAdapter.FilmVH>() {
     private val films: MutableList<Film> = mutableListOf()
@@ -38,7 +38,11 @@ class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAda
             set(value) {
                 field = value
                 // In case that value is null the following line won't be executed
-                (itemView as? TextView)?.text = value?.title
+                with(itemView) {
+                    labelTitle.text = value?.title ?: "No title"
+                    labelGenre.text = value?.genre ?: "No genre"
+                    labelReview.text = "${value?.score ?: "No score"}"
+                }
             }
 
         init {

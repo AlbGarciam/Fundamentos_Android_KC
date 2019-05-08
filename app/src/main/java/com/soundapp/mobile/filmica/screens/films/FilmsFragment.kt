@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
@@ -15,10 +14,10 @@ import kotlinx.android.synthetic.main.fragment_films.*
 import java.lang.IllegalArgumentException
 
 class FilmsFragment: Fragment() {
-    lateinit var listener: FilmsFragmentListener
+    private lateinit var listener: FilmsFragmentListener
 
     private val list: RecyclerView by lazy {
-        filmsList.layoutManager = LinearLayoutManager(context) // AppCompatActivity inherits from Context
+        filmsList.addItemDecoration(FilmsOffsetDecorator())
         return@lazy filmsList
     }
 

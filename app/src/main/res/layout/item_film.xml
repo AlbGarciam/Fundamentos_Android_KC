@@ -1,11 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textSize="18sp"
-    android:textStyle="bold"
-    tools:text="Film"
-    android:id="@+id/label_title">
+    android:layout_height="186dp"
+    app:cardCornerRadius="8dp"
+    tools:layout_width="212dp"
+    app:cardElevation="2dp">
 
-</TextView>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="Background image"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimaryDark"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/labelTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Film"/>
+
+            <TextView
+                android:id="@+id/labelGenre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/labelTitle"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@id/labelReview"
+                android:layout_toLeftOf="@id/labelReview"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                tools:text="Genres"/>
+
+            <TextView
+                android:id="@+id/labelReview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/labelGenre"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:drawableStart="@drawable/ic_action_like_dislike"
+                android:drawableLeft="@drawable/ic_action_like_dislike"
+                android:drawablePadding="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                tools:text="0.0"/>
+
+        </RelativeLayout>
+
+
+    </FrameLayout>
+
+</androidx.cardview.widget.CardView>
