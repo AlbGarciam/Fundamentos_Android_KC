@@ -45,6 +45,16 @@ class FilmsFragment: Fragment() {
         adapter.setFilms(FilmsRepo.films)
     }
 
+    override fun onResume() {
+        super.onResume()
+        // When the fragment is resumed the context always exists
+        FilmsRepo.discoverFilms(context!!, { films ->
+            adapter.setFilms(films)
+        }, { error ->
+
+        })
+    }
+
     interface FilmsFragmentListener {
         fun didRequestedToShow(fragment: FilmsFragment, film: Film)
     }

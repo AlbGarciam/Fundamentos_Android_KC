@@ -27,7 +27,7 @@ class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAda
         return films.size
     }
 
-    fun setFilms(list: MutableList<Film>) {
+    fun setFilms(list: List<Film>) {
         films.clear()
         films.addAll(list)
         notifyDataSetChanged() // Only when the entire set changed
