@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Filmica</string>
     <string name="label_add_watchlist">Add to watchlist</string>
+    <string name="genre">Genre</string>
+    <string name="release_date">Release Date</string>
+    <string name="overview">Overview</string>
 </resources>

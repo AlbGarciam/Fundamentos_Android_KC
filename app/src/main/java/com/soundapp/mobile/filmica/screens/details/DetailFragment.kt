@@ -36,15 +36,16 @@ class DetailFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addButton.setOnClickListener {
+        buttonAdd.setOnClickListener {
             Toast.makeText(this@DetailFragment.context, "Button tapped", Toast.LENGTH_SHORT).show()
         }
         arguments?.getString(PARAMS.ID.value, "")?.let { filmId ->
             FilmsRepo.findFilmBy(filmId)?.let {film ->
-                titleLabel.text = film.title
-                descriptionLabel.text = film.overview
-                genresLabel.text = film.genre
-                ratingsLabel.text = "${film.score}"
+                textTitle.text = film.title
+                textRating.text = "${film.score}"
+                labelDescription.text = film.overview
+                labelGenres.text = film.genre
+                labelDate.text = film.released
             }
         }
     }
