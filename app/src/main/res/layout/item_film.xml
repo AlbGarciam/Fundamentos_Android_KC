@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="186dp"
     app:cardCornerRadius="8dp"
-    tools:layout_width="212dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    tools:layout_width="212dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,9 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"
+            android:contentDescription="Background image"
             android:scaleType="centerCrop"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="Background image"/>
+            tools:srcCompat="@tools:sample/avatars" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -29,15 +29,16 @@
 
             <TextView
                 android:id="@+id/labelTitle"
+                style="@style/Card_Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
                 android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="Film"/>
+                tools:text="Film" />
 
             <TextView
                 android:id="@+id/labelGenre"
+                style="@style/Card_Subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/labelTitle"
@@ -45,23 +46,21 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toStartOf="@id/labelReview"
                 android:layout_toLeftOf="@id/labelReview"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                tools:text="Genres"/>
+                android:maxLines="1"
+                tools:text="Genres" />
 
             <TextView
                 android:id="@+id/labelReview"
+                style="@style/Card_Subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/labelGenre"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:drawableStart="@drawable/ic_action_like_dislike"
-                android:drawableLeft="@drawable/ic_action_like_dislike"
-                android:drawablePadding="4dp"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                tools:text="0.0"/>
+                android:drawableStart="@drawable/ic_action_rating"
+                android:drawableLeft="@drawable/ic_action_rating"
+                android:maxLines="1"
+                tools:text="0.0" />
 
         </RelativeLayout>
 

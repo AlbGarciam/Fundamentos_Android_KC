@@ -26,12 +26,6 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
         supportFragmentManager.beginTransaction()
                 .add(R.id.listContainer, listFragment)
                 .commit()
-        if (isDetailAvailable()) {
-            val detailFragment = DetailFragment.create(FilmsRepo.films.first())
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.detailContainer, detailFragment)
-                    .commit()
-        }
     }
 
     override fun didRequestedToShow(fragment: FilmsFragment, film: Film) {

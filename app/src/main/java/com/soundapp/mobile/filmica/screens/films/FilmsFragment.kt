@@ -42,7 +42,6 @@ class FilmsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         list.adapter = adapter
-        adapter.setFilms(FilmsRepo.films)
     }
 
     override fun onResume() {

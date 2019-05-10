@@ -1,5 +1,6 @@
 package com.soundapp.mobile.filmica.repository.domain
 
+import org.json.JSONArray
 import org.json.JSONObject
 
 data class Film(
@@ -17,9 +18,29 @@ data class Film(
                         title = getString("title"),
                         overview = getString("overview"),
                         score = getDouble("vote_average").toFloat(),
-                        released = getString("release_date")
+                        released = getString("release_date"),
+                        genre = parseGenres(getJSONArray("genre_ids"))
                 )
             }
+        }
+
+        fun parseFilms(jsonArray: JSONArray): List<Film> {
+            var films = mutableListOf<Film>()
+            for (i in 0 until (jsonArray.length() - 1)) {
+                films.add(Film.parseFilm(jsonArray.getJSONObject(i)))
+            }
+            return films.toList()
+        }
+
+        private fun parseGenres(jsonArray: JSONArray): String {
+            val genres = mutableListOf<String>()
+            for (i in 0 until jsonArray.length()-1) {
+                val genreInt = jsonArray.getInt(i)
+                ApiConstants.genres[genreInt]?.let { genre ->
+                    genres.add(genre)
+                }
+            }
+            return genres.joinToString(", ")
         }
     }
 }

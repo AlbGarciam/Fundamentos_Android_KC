@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.Film
+import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_film.view.*
 
 class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAdapter.FilmVH>() {

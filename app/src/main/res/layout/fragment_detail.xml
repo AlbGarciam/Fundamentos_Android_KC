@@ -50,15 +50,16 @@
         app:layout_constraintEnd_toEndOf="@+id/overlay"
         app:layout_constraintStart_toStartOf="@+id/overlay"
         app:layout_constraintTop_toTopOf="@+id/overlay"
-        tools:text="Avengers: End Game" />
+        tools:text="Avengers: End Game"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/textRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:drawableStart="@drawable/ic_action_like_dislike"
-        android:drawableLeft="@drawable/ic_action_like_dislike"
+        android:drawableStart="@drawable/ic_action_rating"
+        android:drawableLeft="@drawable/ic_action_rating"
         android:drawablePadding="4dp"
         android:textColor="@android:color/white"
         android:textSize="16sp"
@@ -82,63 +83,71 @@
         app:layout_constraintTop_toTopOf="@+id/guideline"
         app:srcCompat="@drawable/ic_movieroll" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonAdd">
+        app:layout_constraintTop_toBottomOf="@+id/guideline">
 
-        <TextView
-            android:id="@+id/titleGenre"
-            style="@style/Text_H1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_genre"
-            android:drawableLeft="@drawable/ic_genre"
-            android:text="@string/genre" />
-
-        <TextView
-            android:id="@+id/labelGenres"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Drama" />
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/titleGenre"
+                style="@style/Text_H1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_genre"
+                android:drawableLeft="@drawable/ic_genre"
+                android:text="@string/genre" />
+
+            <TextView
+                android:id="@+id/labelGenres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Drama" />
 
 
-        <TextView
-            android:id="@+id/titleRelease"
-            style="@style/Text_H1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_release"
-            android:drawableLeft="@drawable/ic_release"
-            android:text="@string/release_date" />
+            <TextView
+                android:id="@+id/titleRelease"
+                style="@style/Text_H1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/ic_release"
+                android:drawableLeft="@drawable/ic_release"
+                android:text="@string/release_date" />
 
-        <TextView
-            android:id="@+id/labelDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="10-10-1999" />
+            <TextView
+                android:id="@+id/labelDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="10-10-1999" />
 
-        <TextView
-            android:id="@+id/titleDescription"
-            style="@style/Text_H1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_overview"
-            android:drawableLeft="@drawable/ic_overview"
-            android:text="@string/overview" />
+            <TextView
+                android:id="@+id/titleDescription"
+                style="@style/Text_H1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:drawableStart="@drawable/ic_overview"
+                android:drawableLeft="@drawable/ic_overview"
+                android:text="@string/overview" />
 
-        <TextView
-            android:id="@+id/labelDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textStyle="italic"
-            tools:text="Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/labelDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:textStyle="italic"
+                tools:text="Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsum" />
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
