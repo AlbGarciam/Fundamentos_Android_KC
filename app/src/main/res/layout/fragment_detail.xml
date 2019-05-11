@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.4" />
 
-    <ImageView
+    <com.soundapp.mobile.filmica.screens.utils.FadeImageView
         android:id="@+id/imgFilm"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -10,13 +10,13 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/cardContainer"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
-        <ImageView
+        <com.soundapp.mobile.filmica.screens.utils.FadeImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:contentDescription="Background image"
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars"
             android:id="@+id/cover"/>
@@ -25,8 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/colorPrimaryDark"
-            android:padding="8dp">
+            android:padding="8dp"
+            android:id="@+id/titleContainer">
 
             <TextView
                 android:id="@+id/labelTitle"
