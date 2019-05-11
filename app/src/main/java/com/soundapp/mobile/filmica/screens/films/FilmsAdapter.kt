@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.Film
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_film.view.*
 
@@ -38,12 +39,18 @@ class FilmsAdapter(val listener: (Film) -> Unit) : RecyclerView.Adapter<FilmsAda
         var film: Film? = null
             set(value) {
                 field = value
-                // In case that value is null the following line won't be executed
-                with(itemView) {
-                    labelTitle.text = value?.title ?: "No title"
-                    labelGenre.text = value?.genre ?: "No genre"
-                    labelReview.text = "${value?.score ?: "No score"}"
+                value?.let { value ->
+                    with(itemView) {
+                        labelTitle.text = value.title
+                        labelGenre.text = value.genre
+                        labelReview.text = "${value.score}"
+                        Picasso.with(itemView.context)
+                                .load(value.coverURL())
+                                .into(cover)
+                    }
                 }
+
+
             }
 
         init {

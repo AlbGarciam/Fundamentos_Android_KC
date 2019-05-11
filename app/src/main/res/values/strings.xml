@@ -4,4 +4,6 @@
     <string name="genre">Genre</string>
     <string name="release_date">Release Date</string>
     <string name="overview">Overview</string>
+    <string name="error_request">Ups! Something wrong happened. Please try again</string>
+    <string name="error_button_text">Retry</string>
 </resources>

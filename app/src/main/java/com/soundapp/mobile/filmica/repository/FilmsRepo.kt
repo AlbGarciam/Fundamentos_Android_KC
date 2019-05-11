@@ -28,7 +28,8 @@ object FilmsRepo {
         val url = ApiRoutes.discoverMoviesURL()
         val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
             var films = Film.parseFilms( response.getJSONArray("results") )
-            this.films.addAll(films)
+            FilmsRepo.films.clear()
+            FilmsRepo.films.addAll(films)
             onResponse.invoke(films.toList())
         }, { error ->
             error.printStackTrace()

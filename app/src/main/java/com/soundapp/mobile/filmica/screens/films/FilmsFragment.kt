@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
 import kotlinx.android.synthetic.main.fragment_films.*
+import kotlinx.android.synthetic.main.layout_error.*
 import java.lang.IllegalArgumentException
 
 class FilmsFragment: Fragment() {
@@ -42,16 +44,41 @@ class FilmsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         list.adapter = adapter
+        retryButton.setOnClickListener { reload() }
     }
 
     override fun onResume() {
         super.onResume()
+        reload()
+    }
+
+    private fun reload() {
+        showProgress()
         // When the fragment is resumed the context always exists
         FilmsRepo.discoverFilms(context!!, { films ->
-            adapter.setFilms(films)
-        }, { error ->
+                    adapter.setFilms(films)
+                    showList()
+                }, { errorRequest ->
+                    showError()
+                })
+    }
 
-        })
+    private fun showList() {
+        filmsList.visibility = View.VISIBLE
+        progressBar.visibility = View.INVISIBLE
+        errorView.visibility = View.INVISIBLE
+    }
+
+    private fun showError() {
+        progressBar.visibility = View.INVISIBLE
+        filmsList.visibility = View.INVISIBLE
+        errorView.visibility = View.VISIBLE
+    }
+
+    private fun showProgress() {
+        filmsList.visibility = View.INVISIBLE
+        progressBar.visibility = View.VISIBLE
+        errorView.visibility = View.INVISIBLE
     }
 
     interface FilmsFragmentListener {

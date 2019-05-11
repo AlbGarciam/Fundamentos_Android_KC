@@ -9,8 +9,12 @@ data class Film(
         val released: String = "2019-03-05",
         val genre: String = "No genre",
         val score: Float = 0.0f,
-        val overview: String = "No overview"
+        val overview: String = "No overview",
+        val coverId: String = ""
 ) {
+
+    fun coverURL() = "https://image.tmdb.org/t/p/w500/$coverId"
+
     companion object {
         fun parseFilm(jsonFilm: JSONObject): Film {
             with(jsonFilm) {
@@ -19,7 +23,8 @@ data class Film(
                         overview = getString("overview"),
                         score = getDouble("vote_average").toFloat(),
                         released = getString("release_date"),
-                        genre = parseGenres(getJSONArray("genre_ids"))
+                        genre = parseGenres(getJSONArray("genre_ids")),
+                        coverId = optString("poster_path", "")
                 )
             }
         }

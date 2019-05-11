@@ -1,4 +1,4 @@
-package com.soundapp.mobile.filmica.screens.films
+package com.soundapp.mobile.filmica.screens.utils
 
 import android.graphics.Rect
 import android.view.View

@@ -18,7 +18,8 @@
             android:background="@color/colorPrimary"
             android:contentDescription="Background image"
             android:scaleType="centerCrop"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            android:id="@+id/cover"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
