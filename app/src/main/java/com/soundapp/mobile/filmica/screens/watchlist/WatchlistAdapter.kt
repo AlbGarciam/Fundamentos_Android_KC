@@ -1,32 +1,29 @@
-package com.soundapp.mobile.filmica.screens.films
+package com.soundapp.mobile.filmica.screens.watchlist
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.view.LayoutInflater
+import android.graphics.Color
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
-import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.Film
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmAdapter
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
-import kotlinx.android.synthetic.main.item_film.view.*
+import kotlinx.android.synthetic.main.item_watchlist.view.*
 
-class FilmsAdapter(val listener: (Film) -> Unit)
-    : BaseFilmAdapter<FilmsAdapter.FilmVH>(view = R.layout.item_film, holderCreator = { FilmVH(it, listener) }) {
+class WatchlistAdapter(val listener: (Film) -> Unit):
+        BaseFilmAdapter<WatchlistAdapter.WatchlistVH>(view = R.layout.item_watchlist,
+                holderCreator = { WatchlistVH(it, listener) }) {
 
-    class FilmVH(itemView: View, onClick: (Film) -> Unit) : BaseFilmHolder(itemView, onClick) {
+    class WatchlistVH(itemView: View, onClick: (Film) -> Unit): BaseFilmHolder(itemView, onClick){
         override fun bindFilm(film: Film) {
             super.bindFilm(film)
             with(itemView) {
                 labelTitle.text = film.title
-                labelGenre.text = film.genre
-                labelReview.text = "${film.score}"
+                labelVotes.text = film.score.toString()
+                labelOverview.text = film.overview
                 loadImage(film)
             }
         }
@@ -37,7 +34,7 @@ class FilmsAdapter(val listener: (Film) -> Unit)
                 setColorFrom(bitmap)
             }
 
-            itemView.cover.tag = target
+            itemView.imgPoster.tag = target
 
             Picasso.with(itemView.context)
                     .load(value.coverURL())
@@ -50,9 +47,14 @@ class FilmsAdapter(val listener: (Film) -> Unit)
                 val defaultColor = ContextCompat.getColor(itemView.context, R.color.colorPrimary)
                 val swatch = palette?.vibrantSwatch ?: palette?.dominantSwatch
                 val color = swatch?.rgb ?: defaultColor
-                itemView.titleContainer.setBackgroundColor(color)
-                itemView.cardContainer.setBackgroundColor(color)
-                itemView.cover.setImageBitmap(bitmap)
+                val overlayColor = Color.argb(
+                        (Color.alpha(color)*0.5).toInt(),
+                        Color.red(color),
+                        Color.green(color),
+                        Color.blue(color))
+
+                itemView.imgOverlay.setBackgroundColor(overlayColor)
+                itemView.imgPoster.setImageBitmap(bitmap)
             }
         }
     }
