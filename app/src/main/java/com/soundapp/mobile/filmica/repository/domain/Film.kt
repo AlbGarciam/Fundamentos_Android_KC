@@ -1,22 +1,30 @@
 package com.soundapp.mobile.filmica.repository.domain
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.*
 
+@Entity
 data class Film(
-        val id: String,
+        @PrimaryKey val id: String = UUID.randomUUID().toString(),
         val title: String = "No title",
         val released: String = "2019-03-05",
         val genre: String = "No genre",
-        val score: Float = 0.0f,
+        val score: Float = 0.0f, // By default the column name is the name of the variable
         val overview: String = "No overview",
-        val coverId: String = ""
+        @ColumnInfo(name = "cover_id") val coverId: String = ""
 ) {
+    @Ignore
+    constructor(): this("") // Ignore empty constructor
 
     fun coverURL() = "https://image.tmdb.org/t/p/w500/$coverId"
 
     companion object {
-        fun parseFilm(jsonFilm: JSONObject): Film {
+        private fun parseFilm(jsonFilm: JSONObject): Film {
             with(jsonFilm) {
                 return Film(id = getInt("id").toString(),
                         title = getString("title"),

@@ -34,11 +34,9 @@ class WatchlistFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        FilmsRepo.discoverFilms(context!!, {
+        FilmsRepo.getStoredFilms(context!!) {
             adapter.setFilms(it)
-        }, {
-
-        })
+        }
     }
 
 

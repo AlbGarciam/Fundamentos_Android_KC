@@ -38,6 +38,8 @@ class DetailFragment: Fragment() {
         }
     }
 
+    var film: Film? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_detail, container, false)
     }
@@ -45,10 +47,15 @@ class DetailFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         buttonAdd.setOnClickListener {
-            Toast.makeText(this@DetailFragment.context, "Button tapped", Toast.LENGTH_SHORT).show()
+            film?.let {
+                FilmsRepo.saveFilm(context!!, it) {
+                    Toast.makeText(this@DetailFragment.context, "Added to watchlist", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         arguments?.getString(PARAMS.ID.value, "")?.let { filmId ->
-            FilmsRepo.findFilmBy(filmId)?.let {film ->
+            film = FilmsRepo.findFilmBy(filmId)
+            film?.let {film ->
                 textTitle.text = film.title
                 textRating.text = "${film.score}"
                 labelDescription.text = film.overview
