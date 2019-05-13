@@ -1,12 +1,11 @@
 package com.soundapp.mobile.filmica.screens.details
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -39,6 +38,35 @@ class DetailFragment: Fragment() {
     }
 
     var film: Film? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_detail, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_share) {
+            shareFilm()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun shareFilm() {
+        film?.let {film ->
+            val intent = Intent(Intent.ACTION_SEND)
+            var template = getString(R.string.share_template, film.title, film.score)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, template)
+            startActivity(Intent.createChooser(intent, getString(R.string.share_title)))
+        }
+
+
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_detail, container, false)
