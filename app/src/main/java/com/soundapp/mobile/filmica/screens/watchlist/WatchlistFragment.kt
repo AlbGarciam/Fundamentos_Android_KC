@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.screens.utils.SwipeToDeleteCallback
+import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 class WatchlistFragment : Fragment() {
@@ -29,7 +33,26 @@ class WatchlistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupSwipeHandler()
         watchlistList.adapter = adapter
+    }
+
+    private fun deleteFilm(film: Film, position: Int) {
+        FilmsRepo.removeFilm(context!!, film) {
+            adapter.deleteFilm(position)
+        }
+    }
+
+    private fun setupSwipeHandler() {
+        val swipeHandler = object : SwipeToDeleteCallback() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val film = (viewHolder as? BaseFilmHolder)?.film
+                val position = viewHolder.adapterPosition
+                film?.let { deleteFilm(it, position) }
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(watchlistList)
     }
 
     override fun onResume() {

@@ -33,4 +33,9 @@ open class BaseFilmAdapter<Holder : BaseFilmHolder> (
         this.films.addAll(films)
         notifyDataSetChanged()
     }
+
+    fun deleteFilm(position: Int) {
+        this.films.removeAt(position)
+        notifyItemRemoved(position)
+    }
 }

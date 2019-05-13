@@ -69,6 +69,19 @@ object FilmsRepo {
         }
     }
 
+    fun removeFilm(context: Context, film:Film, callback: () -> Unit) {
+        // Execute this process always on a different thread. Use CoRoutines!!!!
+        GlobalScope.launch(Dispatchers.Main) {
+            val async = async(Dispatchers.IO) {
+                val db = getDbInstance(context)
+                db.filmDao().deleteFilm(film)
+            }
+            async.await()
+            // It won't continue the function until async finishes but it doesn't block the main thread
+            callback.invoke()
+        }
+    }
+
     fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit ) {
         val url = ApiRoutes.discoverMoviesURL()
         val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
