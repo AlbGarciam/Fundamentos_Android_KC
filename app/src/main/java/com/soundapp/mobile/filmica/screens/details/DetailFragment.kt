@@ -16,7 +16,6 @@ import com.soundapp.mobile.filmica.repository.domain.Film
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.*
-import kotlinx.android.synthetic.main.item_film.view.*
 
 class DetailFragment: Fragment() {
     companion object {
@@ -59,13 +58,11 @@ class DetailFragment: Fragment() {
     private fun shareFilm() {
         film?.let {film ->
             val intent = Intent(Intent.ACTION_SEND)
-            var template = getString(R.string.share_template, film.title, film.score)
+            val template = getString(R.string.share_template, film.title, film.score)
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, template)
             startActivity(Intent.createChooser(intent, getString(R.string.share_title)))
         }
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

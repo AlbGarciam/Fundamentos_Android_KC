@@ -6,13 +6,14 @@
     <string name="overview">Overview</string>
     <string name="error_request">Ups! Something wrong happened. Please try again</string>
     <string name="error_button_text">Retry</string>
+
+    <!-- Tabbar menu-->
     <string name="discover">Discover</string>
     <string name="watchlist">Watchlist</string>
+    <string name="trending">Trending</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Share menu -->
     <string name="share_label">Share</string>
-
     <string name="share_template">Let\'s watch %s. Rated %.1f/10</string>
     <string name="share_title">Share the movie</string>
 </resources>

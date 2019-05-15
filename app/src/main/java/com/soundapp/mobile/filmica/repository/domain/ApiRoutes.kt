@@ -21,4 +21,16 @@ object ApiRoutes {
                 .build()
                 .toString()
     }
+
+    fun trendingMoviesURL(language: String = "en-US", sortedBy: String = "popularity.desc"): String {
+        return getURIBuilder()
+                .appendPath("trending")
+                .appendPath("movie")
+                .appendPath("day")
+                .appendQueryParameter("language", language)
+                .appendQueryParameter("sort_by", sortedBy)
+                .appendQueryParameter("include_adult", "false")
+                .build()
+                .toString()
+    }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.soundapp.mobile.filmica.R
+import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
 import com.soundapp.mobile.filmica.screens.details.DetailActivity
 import com.soundapp.mobile.filmica.screens.details.DetailFragment
@@ -13,12 +14,14 @@ import kotlinx.android.synthetic.main.activity_films.*
 // Compilation constant (Not runtime constant!!!!)
 const val FILMS_TAG: String = "Films"
 const val WATCHLIST_TAG: String = "Watchlist"
+const val TRENDING_TAG: String = "Trending"
 
 class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
 
     private fun isDetailAvailable() = detailContainer != null
     private lateinit var activeFragment : Fragment
     private lateinit var filmsFragment: FilmsFragment
+    private lateinit var trendingFilms: FilmsFragment
     private lateinit var watchlistFragment: WatchlistFragment
 
     // This activity contains two fragments on a tablet and one fragment on a phone
@@ -37,6 +40,7 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
             when (menuItem.itemId) {
                 R.id.action_discover -> showMainFragment(filmsFragment)
                 R.id.action_watchlist -> showMainFragment(watchlistFragment)
+                R.id.action_trending -> showMainFragment(trendingFilms)
             }
             true
         }
@@ -51,17 +55,25 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
     private fun restoreFragments(tag: String) {
         filmsFragment = supportFragmentManager.findFragmentByTag(FILMS_TAG) as FilmsFragment
         watchlistFragment = supportFragmentManager.findFragmentByTag(WATCHLIST_TAG) as WatchlistFragment
-        activeFragment = if (tag == FILMS_TAG) filmsFragment else watchlistFragment
+        trendingFilms = supportFragmentManager.findFragmentByTag(TRENDING_TAG) as FilmsFragment
+        when (tag) {
+            FILMS_TAG -> activeFragment = filmsFragment
+            WATCHLIST_TAG -> activeFragment = watchlistFragment
+            TRENDING_TAG -> activeFragment = trendingFilms
+        }
     }
 
     private fun setupFragments() {
         filmsFragment = FilmsFragment()
         watchlistFragment = WatchlistFragment()
+        trendingFilms = FilmsFragment()
         activeFragment = filmsFragment
         supportFragmentManager.beginTransaction()
                 .add(R.id.listContainer, filmsFragment, FILMS_TAG)
                 .add(R.id.listContainer, watchlistFragment, WATCHLIST_TAG)
+                .add(R.id.listContainer, trendingFilms, TRENDING_TAG)
                 .hide(watchlistFragment)
+                .hide(trendingFilms)
                 .commit()
     }
 
@@ -71,6 +83,13 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
                 .show(fragment)
                 .commit()
         activeFragment = fragment
+    }
+
+    override fun didRequestedToLoad(fragment: FilmsFragment) {
+        when (fragment) {
+            filmsFragment -> FilmsRepo.discoverFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
+            trendingFilms -> FilmsRepo.getTrendingFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
+        }
     }
 
     override fun didRequestedToShow(fragment: FilmsFragment, film: Film) {

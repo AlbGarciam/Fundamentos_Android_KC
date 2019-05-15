@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_films.*
 import kotlinx.android.synthetic.main.layout_error.*
 import java.lang.IllegalArgumentException
 
+
 class FilmsFragment: Fragment() {
     private lateinit var listener: FilmsFragmentListener
 
@@ -54,13 +55,14 @@ class FilmsFragment: Fragment() {
 
     private fun reload() {
         showProgress()
-        // When the fragment is resumed the context always exists
-        FilmsRepo.discoverFilms(context!!, { films ->
-                    adapter.setFilms(films)
-                    showList()
-                }, { errorRequest ->
-                    showError()
-                })
+        // In order to be able to reuse the fragment for discover and trending
+        // we are going to call the repo on the fragment manager
+        listener.didRequestedToLoad(this)
+    }
+
+    fun setFilms(films: List<Film>) {
+        adapter.setFilms(films)
+        showList()
     }
 
     private fun showList() {
@@ -69,7 +71,7 @@ class FilmsFragment: Fragment() {
         errorView.visibility = View.INVISIBLE
     }
 
-    private fun showError() {
+    fun showError() {
         progressBar.visibility = View.INVISIBLE
         filmsList.visibility = View.INVISIBLE
         errorView.visibility = View.VISIBLE
@@ -83,5 +85,6 @@ class FilmsFragment: Fragment() {
 
     interface FilmsFragmentListener {
         fun didRequestedToShow(fragment: FilmsFragment, film: Film)
+        fun didRequestedToLoad(fragment: FilmsFragment)
     }
 }

@@ -17,18 +17,53 @@ import kotlinx.coroutines.launch
 
 // Let's create a singleton on the app
 object FilmsRepo {
-    private val films : MutableList<Film> = mutableListOf()
-    // Can be also declared as val films = mutableListOf<Film>()
-    /*
-        get() {// In order to avoid recursive calls, we must use field instead of films
-            if (field.isEmpty())
-                field.addAll(dummyFilms())
-            return field
-        }
-    */
+    private val films: MutableList<Film> = mutableListOf()
+    private val trendingFilms: MutableList<Film> = mutableListOf()
 
     @Volatile // La instancia de la memoria principal se actualiza con la BBDD
     private var database: AppDatabase? = null
+
+    fun findFilmBy(id: String) = films.find { it.id == id } ?: trendingFilms.find { it.id == id }
+
+    /** Network layer **/
+    fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
+        val url = ApiRoutes.discoverMoviesURL()
+        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+            val films = Film.parseFilms(response.getJSONArray("results"))
+            FilmsRepo.films.clear()
+            FilmsRepo.films.addAll(films)
+            onResponse.invoke(films.toList())
+        }, { error ->
+            error.printStackTrace()
+            onError.invoke(Error())
+        })
+        makeRequest(context, request)
+    }
+
+    fun getTrendingFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
+        val url = ApiRoutes.trendingMoviesURL()
+        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+            val trendingFilms = Film.parseFilms(response.getJSONArray("results"))
+            FilmsRepo.trendingFilms.clear()
+            FilmsRepo.trendingFilms.addAll(trendingFilms)
+            onResponse.invoke(trendingFilms.toList())
+        }, { error ->
+            error.printStackTrace()
+            onError.invoke(Error())
+        })
+        makeRequest(context, request)
+    }
+
+    private fun makeRequest(context: Context, request: JsonObjectRequest) {
+        /*** WORKAROUND FOR ANDROID KITKAT AND OLDER
+         * https://stackoverflow.com/questions/42999914/com-android-volley-noconnectionerror-javax-net-ssl-sslexception-connection-clo
+         ***/
+        NetworkUtilities.updateAndroidSecurityProvider(context)
+        /*** END - WORKAROUND FOR ANDROID KITKAT AND OLDER ***/
+        Volley.newRequestQueue(context).add(request)
+    }
+    /** End of Network layer **/
+    /** Database layer **/
 
     private fun getDbInstance(context: Context): AppDatabase {
         if (database == null) {
@@ -39,11 +74,7 @@ object FilmsRepo {
         return database as AppDatabase
     }
 
-    fun findFilmBy(id: String): Film? {
-        return films.find { it.id == id }
-    }
-
-    fun saveFilm(context: Context, film:Film, callback: (Film) -> Unit) {
+    fun saveFilm(context: Context, film: Film, callback: (Film) -> Unit) {
         // Execute this process always on a different thread. Use CoRoutines!!!!
         GlobalScope.launch(Dispatchers.Main) {
             val async = async(Dispatchers.IO) {
@@ -69,7 +100,7 @@ object FilmsRepo {
         }
     }
 
-    fun removeFilm(context: Context, film:Film, callback: () -> Unit) {
+    fun removeFilm(context: Context, film: Film, callback: () -> Unit) {
         // Execute this process always on a different thread. Use CoRoutines!!!!
         GlobalScope.launch(Dispatchers.Main) {
             val async = async(Dispatchers.IO) {
@@ -80,30 +111,5 @@ object FilmsRepo {
             // It won't continue the function until async finishes but it doesn't block the main thread
             callback.invoke()
         }
-    }
-
-    fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit ) {
-        val url = ApiRoutes.discoverMoviesURL()
-        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-            var films = Film.parseFilms( response.getJSONArray("results") )
-            FilmsRepo.films.clear()
-            FilmsRepo.films.addAll(films)
-            onResponse.invoke(films.toList())
-        }, { error ->
-            error.printStackTrace()
-            onError.invoke(Error())
-        })
-        /*** WORKAROUND FOR ANDROID KITKAT AND OLDER ***/
-        /***
-         * https://stackoverflow.com/questions/42999914/com-android-volley-noconnectionerror-javax-net-ssl-sslexception-connection-clo
-         ***/
-        NetworkUtilities.updateAndroidSecurityProvider(context)
-        /*** END - WORKAROUND FOR ANDROID KITKAT AND OLDER ***/
-        Volley.newRequestQueue(context).add(request)
-    }
-
-
-    private fun dummyFilms() : MutableList<Film> {
-        return (0..10).map { i ->  Film(id = "$i", title = "film $i", overview = "Overview $i") }.toMutableList()
     }
 }
