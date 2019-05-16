@@ -13,7 +13,9 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".screens.details.DetailActivity">
         </activity>
-        <activity android:name="com.soundapp.mobile.filmica.screens.films.FilmsActivity">
+        <activity
+            android:name="com.soundapp.mobile.filmica.screens.films.FilmsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

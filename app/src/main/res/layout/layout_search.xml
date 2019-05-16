@@ -17,6 +17,7 @@
         android:layout_height="@dimen/search_bar_height"
         android:layout_gravity="end"
         android:layout_weight="10"
+        android:focusable="true"
         android:focusableInTouchMode="true"
         android:hint="@string/search"
         android:textColor="@android:color/white"

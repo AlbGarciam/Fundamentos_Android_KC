@@ -54,6 +54,14 @@ class WatchlistFragment : Fragment() {
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden)
+            FilmsRepo.getStoredFilms(context!!) {
+                adapter.setFilms(it)
+            }
+    }
+
     private fun setupSwipeHandler() {
         val swipeHandler = object : SwipeToDeleteCallback() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

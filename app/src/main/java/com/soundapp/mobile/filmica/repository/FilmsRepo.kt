@@ -20,11 +20,15 @@ object FilmsRepo {
     private val films: MutableList<Film> = mutableListOf()
     private val trendingFilms: MutableList<Film> = mutableListOf()
     private val lastSearchedFilms: MutableList<Film> = mutableListOf()
+    private val localFilms: MutableList<Film> = mutableListOf()
 
     @Volatile // La instancia de la memoria principal se actualiza con la BBDD
     private var database: AppDatabase? = null
 
-    fun findFilmBy(id: String) = films.find { it.id == id } ?: trendingFilms.find { it.id == id } ?: lastSearchedFilms.find { it.id == id }
+    fun findFilmBy(id: String) = films.find { it.id == id } ?:
+        trendingFilms.find { it.id == id } ?:
+        lastSearchedFilms.find { it.id == id } ?:
+        localFilms.find { it.id == id }
 
     /** Network layer **/
     fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
@@ -110,6 +114,8 @@ object FilmsRepo {
                 db.filmDao().getFilms()
             }
             val films = async.await()
+            localFilms.clear()
+            localFilms.addAll(films)
             // It won't continue the function until async finishes but it doesn't block the main thread
             callback.invoke(films)
         }
