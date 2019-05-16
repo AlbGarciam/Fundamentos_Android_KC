@@ -15,14 +15,15 @@ import kotlinx.android.synthetic.main.activity_films.*
 const val FILMS_TAG: String = "Films"
 const val WATCHLIST_TAG: String = "Watchlist"
 const val TRENDING_TAG: String = "Trending"
+const val SEARCH_TAG: String = "Search"
 
-class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
-
+class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, WatchlistFragment.WatchlistFragmentListener {
     private fun isDetailAvailable() = detailContainer != null
     private lateinit var activeFragment : Fragment
     private lateinit var filmsFragment: FilmsFragment
     private lateinit var trendingFilms: FilmsFragment
     private lateinit var watchlistFragment: WatchlistFragment
+    private lateinit var searchFragment: FilmsFragment
 
     // This activity contains two fragments on a tablet and one fragment on a phone
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +42,7 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
                 R.id.action_discover -> showMainFragment(filmsFragment)
                 R.id.action_watchlist -> showMainFragment(watchlistFragment)
                 R.id.action_trending -> showMainFragment(trendingFilms)
+                R.id.action_search -> showMainFragment(searchFragment)
             }
             true
         }
@@ -56,10 +58,12 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
         filmsFragment = supportFragmentManager.findFragmentByTag(FILMS_TAG) as FilmsFragment
         watchlistFragment = supportFragmentManager.findFragmentByTag(WATCHLIST_TAG) as WatchlistFragment
         trendingFilms = supportFragmentManager.findFragmentByTag(TRENDING_TAG) as FilmsFragment
+        searchFragment = supportFragmentManager.findFragmentByTag(SEARCH_TAG) as FilmsFragment
         when (tag) {
             FILMS_TAG -> activeFragment = filmsFragment
             WATCHLIST_TAG -> activeFragment = watchlistFragment
             TRENDING_TAG -> activeFragment = trendingFilms
+            SEARCH_TAG -> activeFragment = searchFragment
         }
     }
 
@@ -67,13 +71,16 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
         filmsFragment = FilmsFragment()
         watchlistFragment = WatchlistFragment()
         trendingFilms = FilmsFragment()
+        searchFragment = FilmsFragment(true)
         activeFragment = filmsFragment
         supportFragmentManager.beginTransaction()
                 .add(R.id.listContainer, filmsFragment, FILMS_TAG)
                 .add(R.id.listContainer, watchlistFragment, WATCHLIST_TAG)
                 .add(R.id.listContainer, trendingFilms, TRENDING_TAG)
+                .add(R.id.listContainer, searchFragment, SEARCH_TAG)
                 .hide(watchlistFragment)
                 .hide(trendingFilms)
+                .hide(searchFragment)
                 .commit()
     }
 
@@ -85,10 +92,11 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
         activeFragment = fragment
     }
 
-    override fun didRequestedToLoad(fragment: FilmsFragment) {
+    override fun didRequestedToLoad(fragment: FilmsFragment, text: String?) {
         when (fragment) {
             filmsFragment -> FilmsRepo.discoverFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
             trendingFilms -> FilmsRepo.getTrendingFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
+            searchFragment -> FilmsRepo.searchFilms(this, text ?: "", { fragment.setFilms(it) }, { fragment.showError() })
         }
     }
 
@@ -96,8 +104,12 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener {
         if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
     }
 
+    override fun didRequestedToShow(fragment: WatchlistFragment, film: Film) {
+        if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
+    }
+
     private fun updateDetailWith(film: Film) {
-        val fragment = DetailFragment.create(film.id)
+        val fragment = DetailFragment.create(film)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.detailContainer, fragment)
                 .commit()

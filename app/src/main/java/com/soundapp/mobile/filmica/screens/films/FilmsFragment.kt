@@ -8,15 +8,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.screens.utils.FilmicaTextWatcher
 import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
 import kotlinx.android.synthetic.main.fragment_films.*
 import kotlinx.android.synthetic.main.layout_error.*
-import java.lang.IllegalArgumentException
+import kotlinx.android.synthetic.main.layout_search.*
 
 
-class FilmsFragment: Fragment() {
+class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
+    interface FilmsFragmentListener {
+        fun didRequestedToShow(fragment: FilmsFragment, film: Film)
+        fun didRequestedToLoad(fragment: FilmsFragment, text: String? = null)
+    }
+
     private lateinit var listener: FilmsFragmentListener
 
     private val list: RecyclerView by lazy {
@@ -45,6 +50,17 @@ class FilmsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         list.adapter = adapter
+        layoutSearch.visibility = if (showSearch) View.VISIBLE else View.GONE
+
+        searchButton.setOnClickListener {
+            if (searchText.text.count() > 2)
+                reload()
+        }
+
+        searchText.addTextChangedListener(FilmicaTextWatcher{ text ->
+            if (text.count() < 3) showEmpty() else reload()
+        })
+
         retryButton.setOnClickListener { reload() }
     }
 
@@ -54,37 +70,47 @@ class FilmsFragment: Fragment() {
     }
 
     private fun reload() {
-        showProgress()
-        // In order to be able to reuse the fragment for discover and trending
-        // we are going to call the repo on the fragment manager
-        listener.didRequestedToLoad(this)
+        if ( !showSearch ) {
+            showProgress()
+            listener.didRequestedToLoad(this)
+        } else if (searchText.text.count() > 2) {
+            showProgress()
+            listener.didRequestedToLoad(this, searchText.text.toString())
+        } else {
+            showEmpty()
+        }
     }
 
     fun setFilms(films: List<Film>) {
         adapter.setFilms(films)
-        showList()
+        if (films.count() == 0) showEmpty() else showList()
     }
 
     private fun showList() {
         filmsList.visibility = View.VISIBLE
         progressBar.visibility = View.INVISIBLE
         errorView.visibility = View.INVISIBLE
+        emptyView.visibility = View.INVISIBLE
     }
 
     fun showError() {
         progressBar.visibility = View.INVISIBLE
         filmsList.visibility = View.INVISIBLE
         errorView.visibility = View.VISIBLE
+        emptyView.visibility = View.INVISIBLE
     }
 
     private fun showProgress() {
         filmsList.visibility = View.INVISIBLE
         progressBar.visibility = View.VISIBLE
         errorView.visibility = View.INVISIBLE
+        emptyView.visibility = View.INVISIBLE
     }
 
-    interface FilmsFragmentListener {
-        fun didRequestedToShow(fragment: FilmsFragment, film: Film)
-        fun didRequestedToLoad(fragment: FilmsFragment)
+    private fun showEmpty() {
+        filmsList.visibility = View.INVISIBLE
+        progressBar.visibility = View.INVISIBLE
+        errorView.visibility = View.INVISIBLE
+        emptyView.visibility = View.VISIBLE
     }
 }

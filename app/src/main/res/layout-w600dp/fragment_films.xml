@@ -1,27 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_gravity="center"
-        android:background="@color/colorPrimaryDark"/>
-    <include
-        layout="@layout/layout_error"
-        android:visibility="invisible"
-        android:id="@+id/errorView"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/filmsList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3"
-        tools:listitem="@layout/item_film">
+    android:orientation="vertical">
 
-    </androidx.recyclerview.widget.RecyclerView>
-</FrameLayout>
+    <include
+        android:id="@+id/layoutSearch"
+        layout="@layout/layout_search"
+        android:visibility="visible" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="100">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" />
+
+        <include
+            android:id="@+id/errorView"
+            layout="@layout/layout_error"
+            android:visibility="invisible" />
+
+        <include
+            android:id="@+id/emptyView"
+            layout="@layout/layout_empty"
+            android:visibility="invisible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filmsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:listitem="@layout/item_film">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+    </FrameLayout>
+</LinearLayout>

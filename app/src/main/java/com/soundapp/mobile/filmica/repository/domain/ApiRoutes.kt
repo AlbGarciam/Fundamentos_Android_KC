@@ -33,4 +33,16 @@ object ApiRoutes {
                 .build()
                 .toString()
     }
+
+    fun searchMoviesURL(title: String, language: String = "en-US", sortedBy: String = "popularity.desc"): String {
+        return getURIBuilder()
+                .appendPath("search")
+                .appendPath("movie")
+                .appendQueryParameter("query", title)
+                .appendQueryParameter("language", language)
+                .appendQueryParameter("sort_by", sortedBy)
+                .appendQueryParameter("include_adult", "false")
+                .build()
+                .toString()
+    }
 }

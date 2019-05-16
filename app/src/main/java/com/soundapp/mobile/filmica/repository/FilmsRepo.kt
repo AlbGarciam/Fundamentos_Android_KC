@@ -19,11 +19,12 @@ import kotlinx.coroutines.launch
 object FilmsRepo {
     private val films: MutableList<Film> = mutableListOf()
     private val trendingFilms: MutableList<Film> = mutableListOf()
+    private val lastSearchedFilms: MutableList<Film> = mutableListOf()
 
     @Volatile // La instancia de la memoria principal se actualiza con la BBDD
     private var database: AppDatabase? = null
 
-    fun findFilmBy(id: String) = films.find { it.id == id } ?: trendingFilms.find { it.id == id }
+    fun findFilmBy(id: String) = films.find { it.id == id } ?: trendingFilms.find { it.id == id } ?: lastSearchedFilms.find { it.id == id }
 
     /** Network layer **/
     fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
@@ -32,6 +33,20 @@ object FilmsRepo {
             val films = Film.parseFilms(response.getJSONArray("results"))
             FilmsRepo.films.clear()
             FilmsRepo.films.addAll(films)
+            onResponse.invoke(films.toList())
+        }, { error ->
+            error.printStackTrace()
+            onError.invoke(Error())
+        })
+        makeRequest(context, request)
+    }
+
+    fun searchFilms(context: Context, title: String, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
+        val url = ApiRoutes.searchMoviesURL(title)
+        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+            val films = Film.parseFilms(response.getJSONArray("results"))
+            FilmsRepo.lastSearchedFilms.clear()
+            FilmsRepo.lastSearchedFilms.addAll(films)
             onResponse.invoke(films.toList())
         }, { error ->
             error.printStackTrace()

@@ -1,6 +1,7 @@
 package com.soundapp.mobile.filmica.screens.watchlist
 
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,13 +17,23 @@ import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 class WatchlistFragment : Fragment() {
-
-    val adapter: WatchlistAdapter = WatchlistAdapter {film ->
-        showDetail(film)
+    interface WatchlistFragmentListener {
+        fun didRequestedToShow(fragment: WatchlistFragment, film: Film)
     }
 
-    private fun showDetail(film: Film){
+    private lateinit var listener: WatchlistFragmentListener
 
+    private val adapter: WatchlistAdapter = WatchlistAdapter {film ->
+        listener.didRequestedToShow(this, film)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if ( context is WatchlistFragmentListener ) {
+            listener = context
+        } else {
+            throw IllegalArgumentException("The attached context does not implement ${WatchlistFragmentListener::class.java.canonicalName}")
+        }
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
