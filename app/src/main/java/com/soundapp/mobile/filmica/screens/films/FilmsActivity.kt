@@ -8,6 +8,7 @@ import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
 import com.soundapp.mobile.filmica.screens.details.DetailActivity
 import com.soundapp.mobile.filmica.screens.details.DetailFragment
+import com.soundapp.mobile.filmica.screens.placeholder.PlaceholderFragment
 import com.soundapp.mobile.filmica.screens.watchlist.WatchlistFragment
 import kotlinx.android.synthetic.main.activity_films.*
 
@@ -16,6 +17,8 @@ const val FILMS_TAG: String = "Films"
 const val WATCHLIST_TAG: String = "Watchlist"
 const val TRENDING_TAG: String = "Trending"
 const val SEARCH_TAG: String = "Search"
+const val CURRENT_FRAGMENT: String = "Current"
+const val LAST_SELECTED_FILM: String = "Last_selected_film"
 
 class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, WatchlistFragment.WatchlistFragmentListener {
     private fun isDetailAvailable() = detailContainer != null
@@ -25,6 +28,8 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     private lateinit var watchlistFragment: WatchlistFragment
     private lateinit var searchFragment: FilmsFragment
 
+    private var lastSelectedFilm: Film? = null
+
     // This activity contains two fragments on a tablet and one fragment on a phone
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +38,10 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
         if (savedInstanceState == null ) {
             setupFragments()
         } else {
-            val currentTag = savedInstanceState.getString("Active_item", FILMS_TAG)
-            restoreFragments(currentTag)
+            val currentTag = savedInstanceState.getString(CURRENT_FRAGMENT, FILMS_TAG)
+            val lastSelectedFilmId = savedInstanceState.getString(LAST_SELECTED_FILM)
+            restoreListFragment(currentTag)
+            restoreDetailFragment(lastSelectedFilmId)
         }
 
         navigationBar.setOnNavigationItemSelectedListener {menuItem ->
@@ -51,10 +58,13 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     // Executed before destroying the activity
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putString("Active_item",activeFragment.tag)
+        outState?.putString(CURRENT_FRAGMENT,activeFragment.tag)
+        lastSelectedFilm?.let {
+            outState?.putSerializable(LAST_SELECTED_FILM, it.id)
+        }
     }
 
-    private fun restoreFragments(tag: String) {
+    private fun restoreListFragment(tag: String) {
         filmsFragment = supportFragmentManager.findFragmentByTag(FILMS_TAG) as FilmsFragment
         watchlistFragment = supportFragmentManager.findFragmentByTag(WATCHLIST_TAG) as WatchlistFragment
         trendingFilms = supportFragmentManager.findFragmentByTag(TRENDING_TAG) as FilmsFragment
@@ -65,6 +75,12 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
             TRENDING_TAG -> activeFragment = trendingFilms
             SEARCH_TAG -> activeFragment = searchFragment
         }
+    }
+
+    private fun restoreDetailFragment(lastFilmId: String?) {
+        lastSelectedFilm = if (lastFilmId != null) FilmsRepo.findFilmBy(lastFilmId!!) else null
+        if (!isDetailAvailable()) return
+        if (lastSelectedFilm == null) showPlaceholder() else updateDetailWith(lastSelectedFilm!!)
     }
 
     private fun setupFragments() {
@@ -82,6 +98,12 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
                 .hide(trendingFilms)
                 .hide(searchFragment)
                 .commit()
+
+        if (isDetailAvailable()) {
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.detailContainer, PlaceholderFragment())
+                    .commit()
+        }
     }
 
     private fun showMainFragment(fragment: Fragment) {
@@ -101,11 +123,20 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     }
 
     override fun didRequestedToShow(fragment: FilmsFragment, film: Film) {
+        lastSelectedFilm = film
         if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
     }
 
     override fun didRequestedToShow(fragment: WatchlistFragment, film: Film) {
+        lastSelectedFilm = film
         if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
+    }
+
+    private fun showPlaceholder() {
+        val fragment = PlaceholderFragment()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.detailContainer, fragment)
+                .commit()
     }
 
     private fun updateDetailWith(film: Film) {

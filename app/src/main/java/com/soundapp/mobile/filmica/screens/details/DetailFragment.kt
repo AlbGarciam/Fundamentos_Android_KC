@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
@@ -75,6 +74,10 @@ class DetailFragment: Fragment() {
         buttonAdd.setOnClickListener {
             film?.let { addFilmToFavorites(it) }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
         arguments?.getString(PARAMS.ID.value, "")?.let { filmId ->
             film = FilmsRepo.findFilmBy(filmId)
             film?.let {film ->
@@ -103,7 +106,7 @@ class DetailFragment: Fragment() {
             setColorFrom(bitmap)
         }
 
-        imgFilm.tag = target
+        topShadow.tag = target
 
         Picasso.with(context)
                 .load(value.coverURL())
@@ -117,7 +120,7 @@ class DetailFragment: Fragment() {
             val defaultColor = ContextCompat.getColor(context!!, R.color.colorPrimary)
             val swatch = palette?.vibrantSwatch ?: palette?.dominantSwatch
             val color = swatch?.rgb ?: defaultColor
-            imgFilm.setImageBitmap(bitmap)
+            topShadow.setImageBitmap(bitmap)
             val overlayColor = Color.argb(
                     (Color.alpha(color)*0.5).toInt(),
                     Color.red(color),

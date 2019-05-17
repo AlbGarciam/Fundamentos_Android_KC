@@ -15,7 +15,7 @@
         app:layout_constraintGuide_percent="0.4" />
 
     <com.soundapp.mobile.filmica.screens.utils.FadeImageView
-        android:id="@+id/imgFilm"
+        android:id="@+id/topShadow"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorPrimary"
@@ -30,10 +30,10 @@
         android:id="@+id/overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imgFilm"
-        app:layout_constraintEnd_toEndOf="@+id/imgFilm"
-        app:layout_constraintStart_toStartOf="@+id/imgFilm"
-        app:layout_constraintTop_toTopOf="@+id/imgFilm"
+        app:layout_constraintBottom_toBottomOf="@+id/topShadow"
+        app:layout_constraintEnd_toEndOf="@+id/topShadow"
+        app:layout_constraintStart_toStartOf="@+id/topShadow"
+        app:layout_constraintTop_toTopOf="@+id/topShadow"
         tools:background="#4D5D1049" />
 
     <TextView
