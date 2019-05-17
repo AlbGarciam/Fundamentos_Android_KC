@@ -38,4 +38,9 @@ open class BaseFilmAdapter<Holder : BaseFilmHolder> (
         this.films.removeAt(position)
         notifyItemRemoved(position)
     }
+
+    fun insertFilm(position: Int, film: Film){
+        films.add(position, film)
+        notifyItemInserted(position)
+    }
 }

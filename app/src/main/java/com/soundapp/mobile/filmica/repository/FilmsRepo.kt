@@ -93,7 +93,7 @@ object FilmsRepo {
         return database as AppDatabase
     }
 
-    fun saveFilm(context: Context, film: Film, callback: (Film) -> Unit) {
+    fun saveFilm(context: Context, film: Film, callback: (Film) -> Unit = {}) {
         // Execute this process always on a different thread. Use CoRoutines!!!!
         GlobalScope.launch(Dispatchers.Main) {
             val async = async(Dispatchers.IO) {
@@ -106,7 +106,7 @@ object FilmsRepo {
         }
     }
 
-    fun getStoredFilms(context: Context, callback: (List<Film>) -> Unit) {
+    fun getStoredFilms(context: Context, callback: (List<Film>) -> Unit = {}) {
         // Execute this process always on a different thread. Use CoRoutines!!!!
         GlobalScope.launch(Dispatchers.Main) {
             val async = async(Dispatchers.IO) {
@@ -121,7 +121,7 @@ object FilmsRepo {
         }
     }
 
-    fun removeFilm(context: Context, film: Film, callback: () -> Unit) {
+    fun removeFilm(context: Context, film: Film, callback: () -> Unit = {}) {
         // Execute this process always on a different thread. Use CoRoutines!!!!
         GlobalScope.launch(Dispatchers.Main) {
             val async = async(Dispatchers.IO) {

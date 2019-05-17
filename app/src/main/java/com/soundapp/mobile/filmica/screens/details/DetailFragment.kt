@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
+import com.google.android.material.snackbar.Snackbar
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
 import com.soundapp.mobile.filmica.repository.domain.Film
@@ -72,11 +73,7 @@ class DetailFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         buttonAdd.setOnClickListener {
-            film?.let {
-                FilmsRepo.saveFilm(context!!, it) {
-                    Toast.makeText(this@DetailFragment.context, "Added to watchlist", Toast.LENGTH_SHORT).show()
-                }
-            }
+            film?.let { addFilmToFavorites(it) }
         }
         arguments?.getString(PARAMS.ID.value, "")?.let { filmId ->
             film = FilmsRepo.findFilmBy(filmId)
@@ -88,6 +85,15 @@ class DetailFragment: Fragment() {
                 labelDate.text = film.released
                 loadImage(film)
             }
+        }
+    }
+
+    private fun addFilmToFavorites(film: Film) {
+        FilmsRepo.saveFilm(context!!, film) {
+            Snackbar.make(detailFragment, R.string.add_snackbar, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo){
+                        FilmsRepo.removeFilm(this@DetailFragment.context!!, film)
+                    }.show()
         }
     }
 
