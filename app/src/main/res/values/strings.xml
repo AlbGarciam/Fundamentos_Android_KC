@@ -22,5 +22,6 @@
     <!-- Search menu -->
     <string name="search_hint">Search</string>
     <string name="add_snackbar">1 song added</string>
+    <string name="remove_snackbar">1 song removed</string>
     <string name="undo">Undo</string>
 </resources>

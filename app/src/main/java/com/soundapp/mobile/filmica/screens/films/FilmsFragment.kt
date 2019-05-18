@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
+import com.soundapp.mobile.filmica.repository.domain.film.Film
+import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
 import com.soundapp.mobile.filmica.screens.utils.FilmicaTextWatcher
 import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
 import kotlinx.android.synthetic.main.fragment_films.*
@@ -16,13 +18,10 @@ import kotlinx.android.synthetic.main.layout_error.*
 import kotlinx.android.synthetic.main.layout_search.*
 
 
-class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
-    interface FilmsFragmentListener {
-        fun didRequestedToShow(fragment: FilmsFragment, film: Film)
-        fun didRequestedToLoad(fragment: FilmsFragment, text: String? = null)
-    }
-
+class FilmsFragment: Fragment() {
     private lateinit var listener: FilmsFragmentListener
+
+    private fun showSearch(): Boolean = listener.hasToShowSearch(this)
 
     private val list: RecyclerView by lazy {
         filmsList.addItemDecoration(FilmsOffsetDecorator())
@@ -30,7 +29,7 @@ class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
     }
 
     private val adapter = FilmsAdapter { film ->
-        listener.didRequestedToShow(this@FilmsFragment, film)
+        listener.didRequestedToShow(this, film)
     }
 
     override fun onAttach(context: Context?) {
@@ -50,7 +49,7 @@ class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         list.adapter = adapter
-        layoutSearch.visibility = if (showSearch) View.VISIBLE else View.GONE
+        layoutSearch.visibility = if (showSearch()) View.VISIBLE else View.GONE
 
         searchButton.setOnClickListener {
             if (searchText.text.count() > 2)
@@ -70,18 +69,20 @@ class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
     }
 
     private fun reload() {
-        if ( !showSearch ) {
+        if ( !showSearch() ) {
             showProgress()
-            listener.didRequestedToLoad(this)
+            listener.getRepositoryFor(this).get(HashMap(), context!!, { setFilms(it) }, { showError() })
         } else if (searchText.text.count() > 2) {
             showProgress()
-            listener.didRequestedToLoad(this, searchText.text.toString())
+            val hashMap = hashMapOf<String, String>()
+            hashMap[QUERY_PARAM] = searchText.text.toString()
+            listener.getRepositoryFor(this).get(hashMap, context!!, { setFilms(it) }, { showError() })
         } else {
             showEmpty()
         }
     }
 
-    fun setFilms(films: List<Film>) {
+    private fun setFilms(films: List<Film>) {
         adapter.setFilms(films)
         if (films.count() == 0) showEmpty() else showList()
     }
@@ -93,7 +94,7 @@ class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
         emptyView.visibility = View.INVISIBLE
     }
 
-    fun showError() {
+    private fun showError() {
         progressBar.visibility = View.INVISIBLE
         filmsList.visibility = View.INVISIBLE
         errorView.visibility = View.VISIBLE

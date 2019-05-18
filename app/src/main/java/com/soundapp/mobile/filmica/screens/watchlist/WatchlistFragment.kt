@@ -13,10 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.screens.utils.SwipeToDeleteCallback
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder
-import kotlinx.android.synthetic.main.activity_films.*
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 class WatchlistFragment : Fragment() {
@@ -54,7 +53,7 @@ class WatchlistFragment : Fragment() {
     private fun deleteFilm(film: Film, position: Int) {
         FilmsRepo.removeFilm(context!!, film) {
             adapter.deleteFilm(position)
-            Snackbar.make(watchlistList, R.string.add_snackbar, Snackbar.LENGTH_LONG)
+            Snackbar.make(watchlistList, R.string.remove_snackbar, Snackbar.LENGTH_LONG)
                     .setAction(R.string.undo){
                         FilmsRepo.saveFilm(this@WatchlistFragment.context!!, film) {
                             adapter.insertFilm(position, film)

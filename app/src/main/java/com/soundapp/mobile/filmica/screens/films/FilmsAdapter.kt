@@ -1,20 +1,15 @@
 package com.soundapp.mobile.filmica.screens.films
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
-import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmAdapter
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder
 import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.item_film.view.*
 
 class FilmsAdapter(val listener: (Film) -> Unit)

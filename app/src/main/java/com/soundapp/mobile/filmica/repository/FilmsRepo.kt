@@ -8,7 +8,7 @@ import com.android.volley.toolbox.Volley
 import com.soundapp.mobile.filmica.BuildConfig
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes
 import com.soundapp.mobile.filmica.repository.domain.AppDatabase
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.repository.domain.NetworkUtilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,61 +32,6 @@ object FilmsRepo {
 
     fun isStoredLocally(filmId: String) = localFilms.find { it.id == filmId } != null
 
-    /** Network layer **/
-    fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
-        val url = ApiRoutes.discoverMoviesURL()
-        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-            val films = Film.parseFilms(response.getJSONArray("results"))
-            FilmsRepo.films.clear()
-            FilmsRepo.films.addAll(films)
-            onResponse.invoke(films.toList())
-        }, { error ->
-            error.printStackTrace()
-            onError.invoke(Error())
-        })
-        makeRequest(context, request)
-    }
-
-    fun searchFilms(context: Context, title: String, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
-        val url = ApiRoutes.searchMoviesURL(title)
-        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-            val films = Film.parseFilms(response.getJSONArray("results")).slice(0 until 10)
-            // TheMovieDB does not provide a way to limit the number of results.
-            // It only returns the data on pages of 20 elements, so in order to fit with the requirements,
-            // we are going to add the filter of 10 items on the front
-            FilmsRepo.lastSearchedFilms.clear()
-            FilmsRepo.lastSearchedFilms.addAll(films)
-            onResponse.invoke(films.toList())
-        }, { error ->
-            error.printStackTrace()
-            onError.invoke(Error())
-        })
-        makeRequest(context, request)
-    }
-
-    fun getTrendingFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
-        val url = ApiRoutes.trendingMoviesURL()
-        val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-            val trendingFilms = Film.parseFilms(response.getJSONArray("results"))
-            FilmsRepo.trendingFilms.clear()
-            FilmsRepo.trendingFilms.addAll(trendingFilms)
-            onResponse.invoke(trendingFilms.toList())
-        }, { error ->
-            error.printStackTrace()
-            onError.invoke(Error())
-        })
-        makeRequest(context, request)
-    }
-
-    private fun makeRequest(context: Context, request: JsonObjectRequest) {
-        /*** WORKAROUND FOR ANDROID KITKAT AND OLDER
-         * https://stackoverflow.com/questions/42999914/com-android-volley-noconnectionerror-javax-net-ssl-sslexception-connection-clo
-         ***/
-        NetworkUtilities.updateAndroidSecurityProvider(context)
-        /*** END - WORKAROUND FOR ANDROID KITKAT AND OLDER ***/
-        Volley.newRequestQueue(context).add(request)
-    }
-    /** End of Network layer **/
     /** Database layer **/
 
     private fun getDbInstance(context: Context): AppDatabase {

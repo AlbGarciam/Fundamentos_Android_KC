@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
+import com.soundapp.mobile.filmica.repository.films.DiscoverRepository
+import com.soundapp.mobile.filmica.repository.films.SearchRepository
+import com.soundapp.mobile.filmica.repository.films.TrendingRepository
+import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
 import com.soundapp.mobile.filmica.screens.details.DetailActivity
 import com.soundapp.mobile.filmica.screens.details.DetailFragment
 import com.soundapp.mobile.filmica.screens.placeholder.PlaceholderFragment
@@ -20,7 +24,8 @@ const val SEARCH_TAG: String = "Search"
 const val CURRENT_FRAGMENT: String = "Current"
 const val LAST_SELECTED_FILM: String = "Last_selected_film"
 
-class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, WatchlistFragment.WatchlistFragmentListener {
+class FilmsActivity: AppCompatActivity(), FilmsFragmentListener, WatchlistFragment.WatchlistFragmentListener {
+
     private fun isDetailAvailable() = detailContainer != null
     private lateinit var activeFragment : Fragment
     private lateinit var filmsFragment: FilmsFragment
@@ -29,6 +34,7 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     private lateinit var searchFragment: FilmsFragment
 
     private var lastSelectedFilm: Film? = null
+    private var isLastSelectedItemHighlighted: Boolean? = null
 
     // This activity contains two fragments on a tablet and one fragment on a phone
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +84,7 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     }
 
     private fun restoreDetailFragment(lastFilmId: String?) {
-        lastSelectedFilm = if (lastFilmId != null) FilmsRepo.findFilmBy(lastFilmId!!) else null
+        lastSelectedFilm = if (lastFilmId != null) FilmsRepo.findFilmBy(lastFilmId) else null
         if (!isDetailAvailable()) return
         if (lastSelectedFilm == null) showPlaceholder() else updateDetailWith(lastSelectedFilm!!)
     }
@@ -87,7 +93,7 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
         filmsFragment = FilmsFragment()
         watchlistFragment = WatchlistFragment()
         trendingFilms = FilmsFragment()
-        searchFragment = FilmsFragment(true)
+        searchFragment = FilmsFragment()
         activeFragment = filmsFragment
         supportFragmentManager.beginTransaction()
                 .add(R.id.listContainer, filmsFragment, FILMS_TAG)
@@ -114,21 +120,28 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
         activeFragment = fragment
     }
 
-    override fun didRequestedToLoad(fragment: FilmsFragment, text: String?) {
-        when (fragment) {
-            filmsFragment -> FilmsRepo.discoverFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
-            trendingFilms -> FilmsRepo.getTrendingFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
-            searchFragment -> FilmsRepo.searchFilms(this, text ?: "", { fragment.setFilms(it) }, { fragment.showError() })
+    override fun didRequestedToShow(fragment: FilmsFragment, film: Film) {
+        lastSelectedFilm = film
+        isLastSelectedItemHighlighted = false
+        if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
+    }
+
+    override fun getRepositoryFor(fragment: FilmsFragment): DataSourceRepository<Film> {
+        return when(fragment) {
+            filmsFragment -> DiscoverRepository
+            trendingFilms -> TrendingRepository
+            searchFragment -> SearchRepository
+            else -> throw ClassNotFoundException("Class is not supported: ")
         }
     }
 
-    override fun didRequestedToShow(fragment: FilmsFragment, film: Film) {
-        lastSelectedFilm = film
-        if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
+    override fun hasToShowSearch(fragment: FilmsFragment): Boolean {
+        return fragment == searchFragment
     }
 
     override fun didRequestedToShow(fragment: WatchlistFragment, film: Film) {
         lastSelectedFilm = film
+        isLastSelectedItemHighlighted = true
         if (isDetailAvailable()) updateDetailWith(film) else presentDetailWith(film)
     }
 
@@ -140,14 +153,14 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     }
 
     private fun updateDetailWith(film: Film) {
-        val fragment = DetailFragment.create(film)
+        val fragment = DetailFragment.create(film, isLastSelectedItemHighlighted ?: false)
         supportFragmentManager.beginTransaction()
                 .replace(R.id.detailContainer, fragment)
                 .commit()
     }
 
     private fun presentDetailWith(film: Film) {
-        DetailActivity.create(this, film)
+        DetailActivity.create(this, film, isLastSelectedItemHighlighted ?: false)
     }
 
 }

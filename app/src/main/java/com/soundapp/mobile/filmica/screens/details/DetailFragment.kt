@@ -12,28 +12,26 @@ import androidx.palette.graphics.Palette
 import com.google.android.material.snackbar.Snackbar
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.*
 
-class DetailFragment(): Fragment() {
+const val FILM_EXTRA = "film_extra"
+const val LOCAL_FILM_EXTRA = "film_extra_local"
+
+class DetailFragment: Fragment() {
     companion object {
-        private enum class PARAMS(val value: String) {
-            ID("id")
-        }
 
-        fun create(film: Film) : Fragment {
-            return create(filmId = film.id)
-        }
-
-        fun create(filmId: String) : Fragment {
+        fun create(film: Film, isHighlighted: Boolean) : Fragment {
             val fragment = DetailFragment()
             val args = Bundle()
-            args.putString(PARAMS.ID.value, filmId)
+            args.putSerializable(FILM_EXTRA, film)
+            args.putBoolean(LOCAL_FILM_EXTRA, isHighlighted)
             fragment.arguments = args
             return fragment
         }
+
     }
 
     var film: Film? = null
@@ -71,11 +69,11 @@ class DetailFragment(): Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        buttonAdd.hide()
-        arguments?.getString(PARAMS.ID.value, "")?.let {
-            film = FilmsRepo.findFilmBy(it)
-            if (FilmsRepo.isStoredLocally(it)) buttonAdd.hide() else buttonAdd.show()
-        }
+        film = arguments?.getSerializable(FILM_EXTRA) as? Film
+        val isHighlighted = arguments?.getBoolean(LOCAL_FILM_EXTRA)
+        if (film == null || isHighlighted == null)
+            throw IllegalArgumentException("The arguments provided does not fit requirements of ${DetailFragment::class.java.canonicalName}")
+        if (isHighlighted) buttonAdd.hide() else buttonAdd.show()
         buttonAdd.setOnClickListener {
             film?.let { addFilmToFavorites(it) }
         }
