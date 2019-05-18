@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import com.soundapp.mobile.filmica.repository.domain.ApiConstants
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.Serializable
 import java.util.*
 
 @Entity
@@ -18,7 +19,7 @@ data class Film(
         val score: Float = 0.0f, // By default the column name is the name of the variable
         val overview: String = "No overview",
         @ColumnInfo(name = "cover_id") val coverId: String = ""
-) {
+): Serializable {
     @Ignore
     constructor(): this("") // Ignore empty constructor
 

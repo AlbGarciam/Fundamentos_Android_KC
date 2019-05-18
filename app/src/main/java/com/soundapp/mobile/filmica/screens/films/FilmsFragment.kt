@@ -18,12 +18,10 @@ import kotlinx.android.synthetic.main.layout_error.*
 import kotlinx.android.synthetic.main.layout_search.*
 
 
-class FilmsFragment(val showSearch: Boolean = false, val repo: DataSourceRepository<Film>): Fragment() {
-    interface FilmsFragmentListener {
-        fun didRequestedToShow(fragment: FilmsFragment, film: Film)
-    }
-
+class FilmsFragment: Fragment() {
     private lateinit var listener: FilmsFragmentListener
+
+    private fun showSearch(): Boolean = listener.hasToShowSearch(this)
 
     private val list: RecyclerView by lazy {
         filmsList.addItemDecoration(FilmsOffsetDecorator())
@@ -31,7 +29,7 @@ class FilmsFragment(val showSearch: Boolean = false, val repo: DataSourceReposit
     }
 
     private val adapter = FilmsAdapter { film ->
-        listener.didRequestedToShow(this@FilmsFragment, film)
+        listener.didRequestedToShow(this, film)
     }
 
     override fun onAttach(context: Context?) {
@@ -51,7 +49,7 @@ class FilmsFragment(val showSearch: Boolean = false, val repo: DataSourceReposit
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         list.adapter = adapter
-        layoutSearch.visibility = if (showSearch) View.VISIBLE else View.GONE
+        layoutSearch.visibility = if (showSearch()) View.VISIBLE else View.GONE
 
         searchButton.setOnClickListener {
             if (searchText.text.count() > 2)
@@ -71,20 +69,20 @@ class FilmsFragment(val showSearch: Boolean = false, val repo: DataSourceReposit
     }
 
     private fun reload() {
-        if ( !showSearch ) {
+        if ( !showSearch() ) {
             showProgress()
-            repo.get(HashMap(), context!!, { setFilms(it) }, { showError() })
+            listener.getRepositoryFor(this).get(HashMap(), context!!, { setFilms(it) }, { showError() })
         } else if (searchText.text.count() > 2) {
             showProgress()
             val hashMap = hashMapOf<String, String>()
             hashMap[QUERY_PARAM] = searchText.text.toString()
-            repo.get(hashMap, context!!, { setFilms(it) }, { showError() })
+            listener.getRepositoryFor(this).get(hashMap, context!!, { setFilms(it) }, { showError() })
         } else {
             showEmpty()
         }
     }
 
-    fun setFilms(films: List<Film>) {
+    private fun setFilms(films: List<Film>) {
         adapter.setFilms(films)
         if (films.count() == 0) showEmpty() else showList()
     }
@@ -96,7 +94,7 @@ class FilmsFragment(val showSearch: Boolean = false, val repo: DataSourceReposit
         emptyView.visibility = View.INVISIBLE
     }
 
-    fun showError() {
+    private fun showError() {
         progressBar.visibility = View.INVISIBLE
         filmsList.visibility = View.INVISIBLE
         errorView.visibility = View.VISIBLE
