@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
 import com.soundapp.mobile.filmica.repository.domain.film.Film
+import com.soundapp.mobile.filmica.repository.films.SearchRepository
 import com.soundapp.mobile.filmica.screens.utils.FilmicaTextWatcher
 import com.soundapp.mobile.filmica.screens.utils.FilmsLiveDataObserver
 import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
@@ -57,6 +58,17 @@ class FilmsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgress()
+        createObserver()
+
+        list.adapter = adapter
+        layoutSearch.visibility = if (showSearch()) View.VISIBLE else View.GONE
+
+        searchButton.setOnClickListener { reload(searchText.text.toString()) }
+        searchText.addTextChangedListener(FilmicaTextWatcher{ reload(searchText.text.toString()) })
+    }
+
+    private fun createObserver() {
         val config = PagedList.Config.Builder().setPageSize(20).build()
         val factory = FilmsDataSourceFactory(listener.getRepositoryFor(this), context!!)
         films = LivePagedListBuilder(factory, config)
@@ -71,41 +83,18 @@ class FilmsFragment: Fragment() {
             }
         }
         films.observe(this, observer)
-
-
-        list.adapter = adapter
-        layoutSearch.visibility = if (showSearch()) View.VISIBLE else View.GONE
-
-        searchButton.setOnClickListener {
-            if (searchText.text.count() > 2)
-                reload()
-        }
-
-        searchText.addTextChangedListener(FilmicaTextWatcher{ text ->
-            if (text.count() < 3) showEmpty() else reload()
-        })
-
-        retryButton.setOnClickListener { reload() }
     }
 
 
-    private fun reload() {
-        if ( !showSearch() ) {
+    private fun reload(text: String) {
+        if (text.count() > 2) {
             showProgress()
-            listener.getRepositoryFor(this).get(HashMap(), context!!, { setFilms(it) }, { showError() })
-        } else if (searchText.text.count() > 2) {
-            showProgress()
-            val hashMap = hashMapOf<String, String>()
-            hashMap[QUERY_PARAM] = searchText.text.toString()
-            listener.getRepositoryFor(this).get(hashMap, context!!, { setFilms(it) }, { showError() })
+            (listener.getRepositoryFor(this) as? SearchRepository)?.searchedText = text
+            films.removeObservers(this)
+            createObserver()
         } else {
             showEmpty()
         }
-    }
-
-    private fun setFilms(films: List<Film>) {
-        adapter.setFilms(films)
-        if (films.count() == 0) showEmpty() else showList()
     }
 
     private fun showList() {

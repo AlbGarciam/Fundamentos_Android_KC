@@ -15,7 +15,6 @@ open class PagedFilmAdapter<Holder : BaseFilmHolder> (
         diffUtil: DiffUtil.ItemCallback<Film>
 ): PagedListAdapter<Film, Holder>(diffUtil) {
 
-    protected val films = mutableListOf<Film>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context).inflate(this.view, parent, false)
@@ -25,21 +24,5 @@ open class PagedFilmAdapter<Holder : BaseFilmHolder> (
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val film = getItem(position) ?: return
         holder.bindFilm(film)
-    }
-
-    fun setFilms(films: List<Film>) {
-        this.films.clear()
-        this.films.addAll(films)
-        notifyDataSetChanged()
-    }
-
-    fun deleteFilm(position: Int) {
-        this.films.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
-    fun insertFilm(position: Int, film: Film){
-        films.add(position, film)
-        notifyItemInserted(position)
     }
 }
