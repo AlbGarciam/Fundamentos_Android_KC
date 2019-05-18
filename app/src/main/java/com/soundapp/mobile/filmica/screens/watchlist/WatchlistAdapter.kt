@@ -6,7 +6,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmAdapter
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder

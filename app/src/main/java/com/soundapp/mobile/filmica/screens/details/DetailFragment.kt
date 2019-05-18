@@ -12,7 +12,7 @@ import androidx.palette.graphics.Palette
 import com.google.android.material.snackbar.Snackbar
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.*

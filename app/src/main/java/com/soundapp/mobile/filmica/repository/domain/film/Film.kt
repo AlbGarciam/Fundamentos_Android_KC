@@ -1,9 +1,10 @@
-package com.soundapp.mobile.filmica.repository.domain
+package com.soundapp.mobile.filmica.repository.domain.film
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.soundapp.mobile.filmica.repository.domain.ApiConstants
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -38,9 +39,9 @@ data class Film(
         }
 
         fun parseFilms(jsonArray: JSONArray): List<Film> {
-            var films = mutableListOf<Film>()
+            val films = mutableListOf<Film>()
             for (i in 0 until (jsonArray.length() - 1)) {
-                films.add(Film.parseFilm(jsonArray.getJSONObject(i)))
+                films.add(parseFilm(jsonArray.getJSONObject(i)))
             }
             return films.toList()
         }

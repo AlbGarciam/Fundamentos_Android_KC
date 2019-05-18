@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.FilmsRepo
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
+import com.soundapp.mobile.filmica.repository.films.DiscoverRepository
+import com.soundapp.mobile.filmica.repository.films.SearchRepository
+import com.soundapp.mobile.filmica.repository.films.TrendingRepository
 import com.soundapp.mobile.filmica.screens.details.DetailActivity
 import com.soundapp.mobile.filmica.screens.details.DetailFragment
 import com.soundapp.mobile.filmica.screens.placeholder.PlaceholderFragment
@@ -78,16 +81,16 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
     }
 
     private fun restoreDetailFragment(lastFilmId: String?) {
-        lastSelectedFilm = if (lastFilmId != null) FilmsRepo.findFilmBy(lastFilmId!!) else null
+        lastSelectedFilm = if (lastFilmId != null) FilmsRepo.findFilmBy(lastFilmId) else null
         if (!isDetailAvailable()) return
         if (lastSelectedFilm == null) showPlaceholder() else updateDetailWith(lastSelectedFilm!!)
     }
 
     private fun setupFragments() {
-        filmsFragment = FilmsFragment()
+        filmsFragment = FilmsFragment(repo = DiscoverRepository)
         watchlistFragment = WatchlistFragment()
-        trendingFilms = FilmsFragment()
-        searchFragment = FilmsFragment(true)
+        trendingFilms = FilmsFragment(repo = TrendingRepository)
+        searchFragment = FilmsFragment(showSearch = true, repo = SearchRepository)
         activeFragment = filmsFragment
         supportFragmentManager.beginTransaction()
                 .add(R.id.listContainer, filmsFragment, FILMS_TAG)
@@ -112,14 +115,6 @@ class FilmsActivity: AppCompatActivity(), FilmsFragment.FilmsFragmentListener, W
                 .show(fragment)
                 .commit()
         activeFragment = fragment
-    }
-
-    override fun didRequestedToLoad(fragment: FilmsFragment, text: String?) {
-        when (fragment) {
-            filmsFragment -> FilmsRepo.discoverFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
-            trendingFilms -> FilmsRepo.getTrendingFilms(this, { fragment.setFilms(it) }, { fragment.showError() })
-            searchFragment -> FilmsRepo.searchFilms(this, text ?: "", { fragment.setFilms(it) }, { fragment.showError() })
-        }
     }
 
     override fun didRequestedToShow(fragment: FilmsFragment, film: Film) {

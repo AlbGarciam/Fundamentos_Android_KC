@@ -2,7 +2,7 @@ package com.soundapp.mobile.filmica.screens.utils.recyclerview
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.film.Film
 
 open class BaseFilmHolder(itemView: View,
                           clickListener: ((Film) -> Unit)? = null ) : RecyclerView.ViewHolder(itemView) {
@@ -14,7 +14,7 @@ open class BaseFilmHolder(itemView: View,
         }
     }
 
-    open fun bindFilm(film:Film) {
+    open fun bindFilm(film: Film) {
         this.film = film
     }
 }

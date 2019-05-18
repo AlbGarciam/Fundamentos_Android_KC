@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
-import com.soundapp.mobile.filmica.repository.domain.Film
+import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
+import com.soundapp.mobile.filmica.repository.domain.film.Film
+import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
 import com.soundapp.mobile.filmica.screens.utils.FilmicaTextWatcher
 import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
 import kotlinx.android.synthetic.main.fragment_films.*
@@ -16,10 +18,9 @@ import kotlinx.android.synthetic.main.layout_error.*
 import kotlinx.android.synthetic.main.layout_search.*
 
 
-class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
+class FilmsFragment(val showSearch: Boolean = false, val repo: DataSourceRepository<Film>): Fragment() {
     interface FilmsFragmentListener {
         fun didRequestedToShow(fragment: FilmsFragment, film: Film)
-        fun didRequestedToLoad(fragment: FilmsFragment, text: String? = null)
     }
 
     private lateinit var listener: FilmsFragmentListener
@@ -72,10 +73,12 @@ class FilmsFragment(private val showSearch: Boolean = false): Fragment() {
     private fun reload() {
         if ( !showSearch ) {
             showProgress()
-            listener.didRequestedToLoad(this)
+            repo.get(HashMap(), context!!, { setFilms(it) }, { showError() })
         } else if (searchText.text.count() > 2) {
             showProgress()
-            listener.didRequestedToLoad(this, searchText.text.toString())
+            val hashMap = hashMapOf<String, String>()
+            hashMap[QUERY_PARAM] = searchText.text.toString()
+            repo.get(hashMap, context!!, { setFilms(it) }, { showError() })
         } else {
             showEmpty()
         }
