@@ -8,7 +8,7 @@ import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.Data
 
 object SearchRepository: DataSourceRepository<Film> {
     override fun get(params: HashMap<String, String>, context: Context, callback: ((List<Film>) -> Unit)?, error: ((Error?) -> Unit)?) {
-        val url = ApiRoutes.discoverMovies(params)
+        val url = ApiRoutes.searchMovies(params)
         NetworkUtilities.GET_LIST(context, url,{
             val films = Film.parseFilms(it)
             // TheMovieDB does not provide a way to limit the number of results.
