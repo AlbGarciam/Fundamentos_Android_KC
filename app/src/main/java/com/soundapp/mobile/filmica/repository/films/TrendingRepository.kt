@@ -2,7 +2,7 @@ package com.soundapp.mobile.filmica.repository.films
 
 import android.content.Context
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes
-import com.soundapp.mobile.filmica.repository.domain.NetworkUtilities
+import com.soundapp.mobile.filmica.repository.NetworkUtilities
 import com.soundapp.mobile.filmica.repository.domain.film.Film
 
 object TrendingRepository: DataSourceRepository<Film> {

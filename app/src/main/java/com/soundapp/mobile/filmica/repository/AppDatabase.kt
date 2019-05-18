@@ -1,4 +1,4 @@
-package com.soundapp.mobile.filmica.repository.domain
+package com.soundapp.mobile.filmica.repository
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

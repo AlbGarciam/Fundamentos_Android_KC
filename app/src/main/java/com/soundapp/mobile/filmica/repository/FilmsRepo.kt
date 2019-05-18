@@ -2,14 +2,8 @@ package com.soundapp.mobile.filmica.repository
 
 import android.content.Context
 import androidx.room.Room
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
 import com.soundapp.mobile.filmica.BuildConfig
-import com.soundapp.mobile.filmica.repository.domain.ApiRoutes
-import com.soundapp.mobile.filmica.repository.domain.AppDatabase
 import com.soundapp.mobile.filmica.repository.domain.film.Film
-import com.soundapp.mobile.filmica.repository.domain.NetworkUtilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async

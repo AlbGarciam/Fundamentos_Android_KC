@@ -4,7 +4,7 @@ import android.content.Context
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.PAGE_PARAM
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
-import com.soundapp.mobile.filmica.repository.domain.NetworkUtilities
+import com.soundapp.mobile.filmica.repository.NetworkUtilities
 import com.soundapp.mobile.filmica.repository.domain.film.Film
 
 object SearchRepository: DataSourceRepository<Film> {

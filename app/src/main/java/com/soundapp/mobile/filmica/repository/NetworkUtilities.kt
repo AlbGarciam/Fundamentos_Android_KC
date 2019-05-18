@@ -1,4 +1,4 @@
-package com.soundapp.mobile.filmica.repository.domain
+package com.soundapp.mobile.filmica.repository
 
 import android.content.Context
 import android.util.Log
@@ -7,9 +7,12 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.security.ProviderInstaller
 import org.json.JSONArray
+import org.json.JSONObject
 
 object NetworkUtilities {
-     fun updateAndroidSecurityProvider(context: Context) {
+    private val cache = HashMap<String, JSONArray>()
+
+    private fun updateAndroidSecurityProvider(context: Context) {
         try {
             ProviderInstaller.installIfNeeded(context)
         } catch (e: Exception) {
@@ -18,8 +21,17 @@ object NetworkUtilities {
     }
 
     fun GET_LIST(context: Context, path: String, success: (JSONArray) -> Unit, failure: (Error?) -> Unit) {
+        val cached = cache[path]
+        if (cached != null) {
+            success.invoke(cached)
+            return
+        }
+
         val request = JsonObjectRequest(Request.Method.GET, path, null, { response ->
-            success.invoke(response.getJSONArray("results"))
+            val array = response.getJSONArray("results")
+            if (array != null)
+                cache[path] = array
+            success.invoke(array)
         }, {
             failure.invoke(null)
         })
