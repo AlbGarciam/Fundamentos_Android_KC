@@ -30,8 +30,6 @@ object FilmsRepo {
         lastSearchedFilms.find { it.id == id } ?:
         localFilms.find { it.id == id }
 
-    fun isStoredLocally(filmId: String) = localFilms.find { it.id == filmId } != null
-
     /** Database layer **/
 
     private fun getDbInstance(context: Context): AppDatabase {

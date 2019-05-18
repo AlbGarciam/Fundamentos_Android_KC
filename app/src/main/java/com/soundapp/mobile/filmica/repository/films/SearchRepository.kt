@@ -4,7 +4,6 @@ import android.content.Context
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes
 import com.soundapp.mobile.filmica.repository.domain.NetworkUtilities
 import com.soundapp.mobile.filmica.repository.domain.film.Film
-import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
 
 object SearchRepository: DataSourceRepository<Film> {
     override fun get(params: HashMap<String, String>, context: Context, callback: ((List<Film>) -> Unit)?, error: ((Error?) -> Unit)?) {

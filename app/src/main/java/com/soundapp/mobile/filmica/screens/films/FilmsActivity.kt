@@ -9,7 +9,7 @@ import com.soundapp.mobile.filmica.repository.domain.film.Film
 import com.soundapp.mobile.filmica.repository.films.DiscoverRepository
 import com.soundapp.mobile.filmica.repository.films.SearchRepository
 import com.soundapp.mobile.filmica.repository.films.TrendingRepository
-import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
+import com.soundapp.mobile.filmica.repository.films.DataSourceRepository
 import com.soundapp.mobile.filmica.screens.details.DetailActivity
 import com.soundapp.mobile.filmica.screens.details.DetailFragment
 import com.soundapp.mobile.filmica.screens.placeholder.PlaceholderFragment

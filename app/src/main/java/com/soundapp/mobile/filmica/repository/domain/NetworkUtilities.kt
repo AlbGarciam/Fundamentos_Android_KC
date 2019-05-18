@@ -1,6 +1,7 @@
 package com.soundapp.mobile.filmica.repository.domain
 
 import android.content.Context
+import android.util.Log
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -26,6 +27,7 @@ object NetworkUtilities {
     }
 
     private fun makeRequest(context: Context, request: JsonObjectRequest) {
+        Log.d("NetworkUtilities","Making request ${request.url}")
         /*** WORKAROUND FOR ANDROID KITKAT AND OLDER
          * https://stackoverflow.com/questions/42999914/com-android-volley-noconnectionerror-javax-net-ssl-sslexception-connection-clo
          ***/

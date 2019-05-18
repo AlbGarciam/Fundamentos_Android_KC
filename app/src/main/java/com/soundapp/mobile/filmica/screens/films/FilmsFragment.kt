@@ -6,16 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
 import com.soundapp.mobile.filmica.repository.domain.film.Film
-import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
 import com.soundapp.mobile.filmica.screens.utils.FilmicaTextWatcher
+import com.soundapp.mobile.filmica.screens.utils.FilmsLiveDataObserver
 import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
+import com.soundapp.mobile.filmica.screens.utils.paging.FilmsDataSourceFactory
 import kotlinx.android.synthetic.main.fragment_films.*
 import kotlinx.android.synthetic.main.layout_error.*
 import kotlinx.android.synthetic.main.layout_search.*
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 
 class FilmsFragment: Fragment() {
@@ -31,6 +38,8 @@ class FilmsFragment: Fragment() {
     private val adapter = FilmsAdapter { film ->
         listener.didRequestedToShow(this, film)
     }
+
+    private lateinit var films: LiveData<PagedList<Film>>
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -48,6 +57,22 @@ class FilmsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val config = PagedList.Config.Builder().setPageSize(20).build()
+        val factory = FilmsDataSourceFactory(listener.getRepositoryFor(this), context!!)
+        films = LivePagedListBuilder(factory, config)
+                .setFetchExecutor(Executors.newSingleThreadExecutor())
+                .build()
+        val observer = FilmsLiveDataObserver { pagedList ->
+            if (pagedList != null && !pagedList.isEmpty()) {
+                adapter.submitList(pagedList)
+                showList()
+            } else {
+                showEmpty()
+            }
+        }
+        films.observe(this, observer)
+
+
         list.adapter = adapter
         layoutSearch.visibility = if (showSearch()) View.VISIBLE else View.GONE
 
@@ -63,10 +88,6 @@ class FilmsFragment: Fragment() {
         retryButton.setOnClickListener { reload() }
     }
 
-    override fun onResume() {
-        super.onResume()
-        reload()
-    }
 
     private fun reload() {
         if ( !showSearch() ) {
