@@ -30,6 +30,8 @@ object FilmsRepo {
         lastSearchedFilms.find { it.id == id } ?:
         localFilms.find { it.id == id }
 
+    fun isStoredLocally(filmId: String) = localFilms.find { it.id == filmId } != null
+
     /** Network layer **/
     fun discoverFilms(context: Context, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
         val url = ApiRoutes.discoverMoviesURL()
@@ -48,7 +50,10 @@ object FilmsRepo {
     fun searchFilms(context: Context, title: String, onResponse: (List<Film>) -> Unit, onError: (Error) -> Unit) {
         val url = ApiRoutes.searchMoviesURL(title)
         val request = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-            val films = Film.parseFilms(response.getJSONArray("results"))
+            val films = Film.parseFilms(response.getJSONArray("results")).slice(0 until 10)
+            // TheMovieDB does not provide a way to limit the number of results.
+            // It only returns the data on pages of 20 elements, so in order to fit with the requirements,
+            // we are going to add the filter of 10 items on the front
             FilmsRepo.lastSearchedFilms.clear()
             FilmsRepo.lastSearchedFilms.addAll(films)
             onResponse.invoke(films.toList())
@@ -99,6 +104,7 @@ object FilmsRepo {
             val async = async(Dispatchers.IO) {
                 val db = getDbInstance(context)
                 db.filmDao().insertFilm(film)
+                getStoredFilms(context) // Update cached items
             }
             async.await()
             // It won't continue the function until async finishes but it doesn't block the main thread
@@ -117,7 +123,7 @@ object FilmsRepo {
             localFilms.clear()
             localFilms.addAll(films)
             // It won't continue the function until async finishes but it doesn't block the main thread
-            callback.invoke(films)
+            callback.invoke(localFilms)
         }
     }
 
@@ -127,6 +133,7 @@ object FilmsRepo {
             val async = async(Dispatchers.IO) {
                 val db = getDbInstance(context)
                 db.filmDao().deleteFilm(film)
+                getStoredFilms(context) // Update cached items
             }
             async.await()
             // It won't continue the function until async finishes but it doesn't block the main thread

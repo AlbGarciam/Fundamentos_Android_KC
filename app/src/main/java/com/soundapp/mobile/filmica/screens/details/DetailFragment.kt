@@ -17,7 +17,7 @@ import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_detail.*
 
-class DetailFragment: Fragment() {
+class DetailFragment(): Fragment() {
     companion object {
         private enum class PARAMS(val value: String) {
             ID("id")
@@ -71,6 +71,11 @@ class DetailFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        buttonAdd.hide()
+        arguments?.getString(PARAMS.ID.value, "")?.let {
+            film = FilmsRepo.findFilmBy(it)
+            if (FilmsRepo.isStoredLocally(it)) buttonAdd.hide() else buttonAdd.show()
+        }
         buttonAdd.setOnClickListener {
             film?.let { addFilmToFavorites(it) }
         }
@@ -78,16 +83,13 @@ class DetailFragment: Fragment() {
 
     override fun onResume() {
         super.onResume()
-        arguments?.getString(PARAMS.ID.value, "")?.let { filmId ->
-            film = FilmsRepo.findFilmBy(filmId)
-            film?.let {film ->
-                textTitle.text = film.title
-                textRating.text = "${film.score}"
-                labelDescription.text = film.overview
-                labelGenres.text = film.genre
-                labelDate.text = film.released
-                loadImage(film)
-            }
+        film?.let {film ->
+            textTitle.text = film.title
+            textRating.text = "${film.score}"
+            labelDescription.text = film.overview
+            labelGenres.text = film.genre
+            labelDate.text = film.released
+            loadImage(film)
         }
     }
 
