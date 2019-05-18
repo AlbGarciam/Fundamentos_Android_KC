@@ -9,7 +9,9 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class FilmsDataSource(val repo: DataSourceRepository<Film>, val context: Context): PageKeyedDataSource<Int, Film>() {
+class FilmsDataSource(private val repo: DataSourceRepository<Film>,
+                      private val context: Context,
+                      private val onError: (Error?) -> Unit): PageKeyedDataSource<Int, Film>() {
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Film>) {
         val initialPage = 1
 
@@ -26,7 +28,7 @@ class FilmsDataSource(val repo: DataSourceRepository<Film>, val context: Context
         repo.get(params = args, context = context, callback = {
             cont.resume(it)
         }, error = {
-            cont.resume(listOf())
+            onError.invoke(it)
         })
     }
 
@@ -34,13 +36,10 @@ class FilmsDataSource(val repo: DataSourceRepository<Film>, val context: Context
         val page: Int = params.key
         val args = HashMap<String, String>()
         args[ApiRoutes.PAGE_PARAM] = page.toString()
-        repo.get(params = args,
-                context = context,
-                callback = {
+        repo.get(params = args, context = context, callback = {
                     callback.onResult(it.toMutableList(), if (page == 1000) null else (page+1))
-                },
-                error = {
-
+                }, error = {
+                    onError.invoke(it)
                 })
 
     }
@@ -55,7 +54,7 @@ class FilmsDataSource(val repo: DataSourceRepository<Film>, val context: Context
                     callback.onResult(it.toMutableList(), if (page == 1) null else (page-1))
                 },
                 error = {
-
+                    onError.invoke(it)
                 })
     }
 

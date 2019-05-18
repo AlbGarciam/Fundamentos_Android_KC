@@ -66,11 +66,16 @@ class FilmsFragment: Fragment() {
 
         searchButton.setOnClickListener { reload(searchText.text.toString()) }
         searchText.addTextChangedListener(FilmicaTextWatcher{ reload(searchText.text.toString()) })
+        retryButton.setOnClickListener { reload(searchText.text.toString()) }
+    }
+
+    private var onError: (Error?) -> Unit = {
+        showError()
     }
 
     private fun createObserver() {
         val config = PagedList.Config.Builder().setPageSize(20).build()
-        val factory = FilmsDataSourceFactory(listener.getRepositoryFor(this), context!!)
+        val factory = FilmsDataSourceFactory(listener.getRepositoryFor(this), context!!, onError)
         films = LivePagedListBuilder(factory, config)
                 .setFetchExecutor(Executors.newSingleThreadExecutor())
                 .build()
@@ -87,12 +92,12 @@ class FilmsFragment: Fragment() {
 
 
     private fun reload(text: String) {
-        if (text.count() > 2) {
+        if ( (showSearch() && text.count() > 2) || !showSearch() ) {
             showProgress()
             (listener.getRepositoryFor(this) as? SearchRepository)?.searchedText = text
             films.removeObservers(this)
             createObserver()
-        } else {
+        }else {
             showEmpty()
         }
     }

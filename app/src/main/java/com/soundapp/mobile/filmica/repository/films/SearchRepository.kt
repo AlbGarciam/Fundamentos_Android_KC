@@ -12,8 +12,8 @@ object SearchRepository: DataSourceRepository<Film> {
 
     override fun get(params: HashMap<String, String>, context: Context, callback: ((List<Film>) -> Unit)?, error: ((Error?) -> Unit)?) {
         params[QUERY_PARAM] = searchedText
-        if ((params[PAGE_PARAM]?.toInt() ?: 0) > 1) {
-            error?.invoke(null)
+        if (searchedText.count() < 3 || (params[PAGE_PARAM]?.toInt() ?: 0) > 1) {
+            callback?.invoke(listOf())
             return
         }
         val url = ApiRoutes.searchMovies(params)
