@@ -1,4 +1,4 @@
-package com.soundapp.mobile.filmica.repository.paging.datasourcerepositories
+package com.soundapp.mobile.filmica.repository.films
 
 import android.content.Context
 

@@ -2,19 +2,30 @@ package com.soundapp.mobile.filmica.repository.films
 
 import android.content.Context
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes
+import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.PAGE_PARAM
+import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
 import com.soundapp.mobile.filmica.repository.domain.NetworkUtilities
 import com.soundapp.mobile.filmica.repository.domain.film.Film
-import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
 
 object SearchRepository: DataSourceRepository<Film> {
+    var searchedText: String = ""
+
     override fun get(params: HashMap<String, String>, context: Context, callback: ((List<Film>) -> Unit)?, error: ((Error?) -> Unit)?) {
+        params[QUERY_PARAM] = searchedText
+        if ((params[PAGE_PARAM]?.toInt() ?: 0) > 1) {
+            error?.invoke(null)
+            return
+        }
         val url = ApiRoutes.searchMovies(params)
         NetworkUtilities.GET_LIST(context, url,{
-            val films = Film.parseFilms(it)
+            var films = Film.parseFilms(it)
+            if (films.count() > 10) {
+                films = films.slice(0 until 10)
+            }
             // TheMovieDB does not provide a way to limit the number of results.
             // It only returns the data on pages of 20 elements, so in order to fit with the requirements,
             // we are going to add the filter of 10 items on the front
-            callback?.invoke(films.slice(0 until 10))
+            callback?.invoke(films)
         }, {
             error?.invoke(it)
         })

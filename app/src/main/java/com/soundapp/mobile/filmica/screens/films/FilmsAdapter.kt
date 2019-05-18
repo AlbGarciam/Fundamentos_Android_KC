@@ -6,14 +6,16 @@ import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.film.Film
+import com.soundapp.mobile.filmica.repository.domain.film.FilmsDiffutil
 import com.soundapp.mobile.filmica.screens.utils.TargetFinishedListener
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmAdapter
 import com.soundapp.mobile.filmica.screens.utils.recyclerview.BaseFilmHolder
+import com.soundapp.mobile.filmica.screens.utils.recyclerview.PagedFilmAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_film.view.*
 
-class FilmsAdapter(val listener: (Film) -> Unit)
-    : BaseFilmAdapter<FilmsAdapter.FilmVH>(view = R.layout.item_film, holderCreator = { FilmVH(it, listener) }) {
+class FilmsAdapter(val listener: (Film) -> Unit): PagedFilmAdapter<FilmsAdapter.FilmVH>(
+        view = R.layout.item_film, holderCreator = { FilmVH(it, listener) }, diffUtil = FilmsDiffutil()) {
 
     class FilmVH(itemView: View, onClick: (Film) -> Unit) : BaseFilmHolder(itemView, onClick) {
         override fun bindFilm(film: Film) {

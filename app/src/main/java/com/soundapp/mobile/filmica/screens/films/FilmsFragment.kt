@@ -6,16 +6,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.soundapp.mobile.filmica.R
 import com.soundapp.mobile.filmica.repository.domain.ApiRoutes.QUERY_PARAM
 import com.soundapp.mobile.filmica.repository.domain.film.Film
-import com.soundapp.mobile.filmica.repository.paging.datasourcerepositories.DataSourceRepository
+import com.soundapp.mobile.filmica.repository.films.SearchRepository
 import com.soundapp.mobile.filmica.screens.utils.FilmicaTextWatcher
+import com.soundapp.mobile.filmica.screens.utils.FilmsLiveDataObserver
 import com.soundapp.mobile.filmica.screens.utils.FilmsOffsetDecorator
+import com.soundapp.mobile.filmica.screens.utils.paging.FilmsDataSourceFactory
 import kotlinx.android.synthetic.main.fragment_films.*
 import kotlinx.android.synthetic.main.layout_error.*
 import kotlinx.android.synthetic.main.layout_search.*
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 
 class FilmsFragment: Fragment() {
@@ -31,6 +39,8 @@ class FilmsFragment: Fragment() {
     private val adapter = FilmsAdapter { film ->
         listener.didRequestedToShow(this, film)
     }
+
+    private lateinit var films: LiveData<PagedList<Film>>
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -48,43 +58,43 @@ class FilmsFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showProgress()
+        createObserver()
+
         list.adapter = adapter
         layoutSearch.visibility = if (showSearch()) View.VISIBLE else View.GONE
 
-        searchButton.setOnClickListener {
-            if (searchText.text.count() > 2)
-                reload()
+        searchButton.setOnClickListener { reload(searchText.text.toString()) }
+        searchText.addTextChangedListener(FilmicaTextWatcher{ reload(searchText.text.toString()) })
+    }
+
+    private fun createObserver() {
+        val config = PagedList.Config.Builder().setPageSize(20).build()
+        val factory = FilmsDataSourceFactory(listener.getRepositoryFor(this), context!!)
+        films = LivePagedListBuilder(factory, config)
+                .setFetchExecutor(Executors.newSingleThreadExecutor())
+                .build()
+        val observer = FilmsLiveDataObserver { pagedList ->
+            if (pagedList != null && !pagedList.isEmpty()) {
+                adapter.submitList(pagedList)
+                showList()
+            } else {
+                showEmpty()
+            }
         }
-
-        searchText.addTextChangedListener(FilmicaTextWatcher{ text ->
-            if (text.count() < 3) showEmpty() else reload()
-        })
-
-        retryButton.setOnClickListener { reload() }
+        films.observe(this, observer)
     }
 
-    override fun onResume() {
-        super.onResume()
-        reload()
-    }
 
-    private fun reload() {
-        if ( !showSearch() ) {
+    private fun reload(text: String) {
+        if (text.count() > 2) {
             showProgress()
-            listener.getRepositoryFor(this).get(HashMap(), context!!, { setFilms(it) }, { showError() })
-        } else if (searchText.text.count() > 2) {
-            showProgress()
-            val hashMap = hashMapOf<String, String>()
-            hashMap[QUERY_PARAM] = searchText.text.toString()
-            listener.getRepositoryFor(this).get(hashMap, context!!, { setFilms(it) }, { showError() })
+            (listener.getRepositoryFor(this) as? SearchRepository)?.searchedText = text
+            films.removeObservers(this)
+            createObserver()
         } else {
             showEmpty()
         }
-    }
-
-    private fun setFilms(films: List<Film>) {
-        adapter.setFilms(films)
-        if (films.count() == 0) showEmpty() else showList()
     }
 
     private fun showList() {
